@@ -1,3 +1,5 @@
+`use strict`;
+
 const getMenuTpl = () => {
   return `
     <section class="control__btn-wrap">
@@ -480,27 +482,26 @@ const getLoadMoreBtnTpl = () => {
   `;
 };
 
-const renderElement = (container, tpl, position = 'beforeend') => {
+const renderElement = (container, tpl, position = `beforeend`) => {
   container.insertAdjacentHTML(position, tpl);
 };
 
-const mainEl = document.querySelector('.main')
-const controlEl = mainEl.querySelector('.control');
+const mainEl = document.querySelector(`.main`);
+const controlEl = mainEl.querySelector(`.control`);
 
 renderElement(controlEl, getMenuTpl());
 renderElement(mainEl, getSearchTpl());
 renderElement(mainEl, getFilterTpl());
 renderElement(mainEl, getBoardTpl());
 
-const boardEl = mainEl.querySelector('.board');
-const boardTasksEl = boardEl.querySelector('.board__tasks');
+const boardEl = mainEl.querySelector(`.board`);
+const boardTasksEl = boardEl.querySelector(`.board__tasks`);
 
-renderElement(boardEl, getSortTpl());
+renderElement(boardEl, getSortTpl(), `afterbegin`);
 renderElement(boardTasksEl, getCardFormTpl());
 
 for (let i = 0; i < 3; i++) {
   renderElement(boardTasksEl, getTaskCardTpl());
 }
 
-boardEl.appendChild(boardTasksEl);
-mainEl.appendChild(boardEl);
+renderElement(boardEl, getLoadMoreBtnTpl());
