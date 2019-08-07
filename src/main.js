@@ -114,6 +114,14 @@ const getFilterTpl = () => {
   `;
 };
 
+const getBoardTpl = () => {
+  return `
+    <div class="board container">
+      <div class="board__tasks"></div>
+    </div>
+  `;
+};
+
 const getSortTpl = () => {
   return `
     <div class="board__filter-list">
@@ -472,21 +480,21 @@ const getLoadMoreBtnTpl = () => {
   `;
 };
 
-const renderElement = (container, tpl) => {
-  container.insertAdjacentHTML('beforeend', tpl);
+const renderElement = (container, tpl, position = 'beforeend') => {
+  container.insertAdjacentHTML(position, tpl);
 };
 
 const mainEl = document.querySelector('.main')
-const controlEl = document.querySelector('.control');
-const boardEl = document.createElement('div');
-const boardTasksEl = document.createElement('div');
-
-boardEl.classList = 'board container';
-boardTasksEl.classList = 'board__tasks';
+const controlEl = mainEl.querySelector('.control');
 
 renderElement(controlEl, getMenuTpl());
 renderElement(mainEl, getSearchTpl());
 renderElement(mainEl, getFilterTpl());
+renderElement(mainEl, getBoardTpl());
+
+const boardEl = mainEl.querySelector('.board');
+const boardTasksEl = boardEl.querySelector('.board__tasks');
+
 renderElement(boardEl, getSortTpl());
 renderElement(boardTasksEl, getCardFormTpl());
 
