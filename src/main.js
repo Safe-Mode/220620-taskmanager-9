@@ -1,11 +1,11 @@
-import { getMenuTpl } from './components/menu';
-import { getSearchTpl } from './components/search';
-import { getFilterTpl } from './components/filter';
-import { getBoardTpl } from './components/board';
-import { getSortTpl } from './components/sorting';
-import { getTaskCardTpl } from './components/task-card';
-import { getCardFormTpl } from './components/form-card';
-import { getMoreBtnTpl } from './components/more-btn';
+import {getMenuTpl} from './components/menu';
+import {getSearchTpl} from './components/search';
+import {getFilterTpl} from './components/filter';
+import {getBoardTpl} from './components/board';
+import {getSortTpl} from './components/sorting';
+import {getTaskCardTpl} from './components/task-card';
+import {getCardFormTpl} from './components/form-card';
+import {getMoreBtnTpl} from './components/more-btn';
 
 const renderElement = (container, tpl, position = `beforeend`) => {
   container.insertAdjacentHTML(position, tpl);

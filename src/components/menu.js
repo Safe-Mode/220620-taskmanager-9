@@ -27,4 +27,4 @@ const getMenuTpl = () => {
   `;
 };
 
-export { getMenuTpl };
+export {getMenuTpl};

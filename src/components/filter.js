@@ -71,4 +71,4 @@ const getFilterTpl = () => {
   `;
 };
 
-export { getFilterTpl };
+export {getFilterTpl};

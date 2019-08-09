@@ -68,4 +68,4 @@ const getTaskCardTpl = () => {
   `;
 };
 
-export { getTaskCardTpl };
+export {getTaskCardTpl};

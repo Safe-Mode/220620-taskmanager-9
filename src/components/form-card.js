@@ -270,4 +270,4 @@ const getCardFormTpl = () => {
   `;
 };
 
-export { getCardFormTpl };
+export {getCardFormTpl};

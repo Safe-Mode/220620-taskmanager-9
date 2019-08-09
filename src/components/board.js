@@ -6,4 +6,4 @@ const getBoardTpl = () => {
   `;
 };
 
-export { getBoardTpl };
+export {getBoardTpl};

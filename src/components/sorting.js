@@ -8,4 +8,4 @@ const getSortTpl = () => {
   `;
 };
 
-export { getSortTpl };
+export {getSortTpl};

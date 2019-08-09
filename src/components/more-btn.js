@@ -4,4 +4,4 @@ const getMoreBtnTpl = () => {
   `;
 };
 
-export { getMoreBtnTpl };
+export {getMoreBtnTpl};

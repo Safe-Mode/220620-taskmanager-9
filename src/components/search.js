@@ -12,4 +12,4 @@ const getSearchTpl = () => {
   `;
 };
 
-export { getSearchTpl };
+export {getSearchTpl};
