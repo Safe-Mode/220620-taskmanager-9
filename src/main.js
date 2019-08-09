@@ -1,5 +1,3 @@
-'use strict';
-
 const getMenuTpl = () => {
   return `
     <section class="control__btn-wrap">
