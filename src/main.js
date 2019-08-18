@@ -6,7 +6,7 @@ import {getSortTpl} from './components/sorting';
 import {getTaskCardTpl} from './components/task-card';
 import {getCardFormTpl} from './components/form-card';
 import {getMoreBtnTpl} from './components/more-btn';
-import taskCardData from './data';
+import {tasks, filters} from './data';
 
 const renderElement = (container, tpl, position = `beforeend`) => {
   container.insertAdjacentHTML(position, tpl);
@@ -17,7 +17,7 @@ const controlEl = mainEl.querySelector(`.control`);
 
 renderElement(controlEl, getMenuTpl());
 renderElement(mainEl, getSearchTpl());
-renderElement(mainEl, getFilterTpl());
+renderElement(mainEl, getFilterTpl(filters));
 renderElement(mainEl, getBoardTpl());
 
 const boardEl = mainEl.querySelector(`.board`);
@@ -26,8 +26,8 @@ const boardTasksEl = boardEl.querySelector(`.board__tasks`);
 renderElement(boardEl, getSortTpl(), `afterbegin`);
 renderElement(boardTasksEl, getCardFormTpl());
 
-for (let i = 0; i < 3; i++) {
-  renderElement(boardTasksEl, getTaskCardTpl(taskCardData));
-}
+tasks.forEach((task) => {
+  renderElement(boardTasksEl, getTaskCardTpl(task));
+});
 
 renderElement(boardEl, getMoreBtnTpl());

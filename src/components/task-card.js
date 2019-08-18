@@ -1,6 +1,6 @@
-const getTaskCardTpl = ({color, repeatingDays, isMissed, description, dueDate, tags}) => {
+const getTaskCardTpl = ({color, repeatingDays, isOverdue, description, dueDate, tags}) => {
   return `
-    <article class="card card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``} ${(isMissed) ? `card--deadline` : ``}">
+    <article class="card card--${color} ${Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``} ${(isOverdue) ? `card--deadline` : ``}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
