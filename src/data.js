@@ -69,7 +69,9 @@ const filters = [
   {
     title: `Repeating`,
     count: tasks.filter((task) => {
-      return Object.keys(task.repeatingDays).length;
+      return Object.values(task.repeatingDays).some((value) => {
+        return value;
+      });
     }).length,
   },
   {
