@@ -24,10 +24,13 @@ const boardEl = mainEl.querySelector(`.board`);
 const boardTasksEl = boardEl.querySelector(`.board__tasks`);
 
 renderElement(boardEl, getSortTpl(), `afterbegin`);
-renderElement(boardTasksEl, getCardFormTpl());
 
-tasks.forEach((task) => {
-  renderElement(boardTasksEl, getTaskCardTpl(task));
+tasks.forEach((task, index) => {
+  if (!index) {
+    renderElement(boardTasksEl, getCardFormTpl());
+  } else {
+    renderElement(boardTasksEl, getTaskCardTpl(task));
+  }
 });
 
 renderElement(boardEl, getMoreBtnTpl());
