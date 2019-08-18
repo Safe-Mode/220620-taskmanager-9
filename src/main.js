@@ -6,6 +6,7 @@ import {getSortTpl} from './components/sorting';
 import {getTaskCardTpl} from './components/task-card';
 import {getCardFormTpl} from './components/form-card';
 import {getMoreBtnTpl} from './components/more-btn';
+import taskCardData from './data';
 
 const renderElement = (container, tpl, position = `beforeend`) => {
   container.insertAdjacentHTML(position, tpl);
@@ -26,7 +27,7 @@ renderElement(boardEl, getSortTpl(), `afterbegin`);
 renderElement(boardTasksEl, getCardFormTpl());
 
 for (let i = 0; i < 3; i++) {
-  renderElement(boardTasksEl, getTaskCardTpl());
+  renderElement(boardTasksEl, getTaskCardTpl(taskCardData));
 }
 
 renderElement(boardEl, getMoreBtnTpl());

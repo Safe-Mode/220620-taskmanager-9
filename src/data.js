@@ -30,4 +30,5 @@ export default {
   ][Math.floor(Math.random() * 5)],
   isFavorite: Boolean(Math.round(Math.random())),
   isArchive: Boolean(Math.round(Math.random())),
+  isMissed: Boolean(Math.round(Math.random())),
 };
