@@ -1,19 +1,16 @@
-import {getMenuTpl} from './components/menu';
-import {getSearchTpl} from './components/search';
-import {getFilterTpl} from './components/filter';
-import {getBoardTpl} from './components/board';
-import {getSortTpl} from './components/sorting';
-import {getTaskCardTpl} from './components/task-card';
-import {getCardFormTpl} from './components/form-card';
-import {getMoreBtnTpl} from './components/more-btn';
+import {Menu} from './components/menu';
+import {Search} from './components/search';
+import {Filter} from './components/filter';
+import {Board} from './components/board';
+import {Sorting} from './components/sorting';
+import {Task} from './components/task';
+import {TaskEdit} from './components/task-edit';
+import {MoreBtn} from './components/more-btn';
 import {tasks, filters} from './data';
+import {render} from './util';
 
 const NUM_SCALE = 10;
 const CARDS_PER_PAGE = 8;
-
-const renderElement = (container, tpl, position = `beforeend`) => {
-  container.insertAdjacentHTML(position, tpl);
-};
 
 const renderTasks = (editFirst) => {
   for (let [index, task] of Object.entries(tasks)) {
@@ -24,9 +21,11 @@ const renderTasks = (editFirst) => {
     }
 
     if (editFirst && !index) {
-      renderElement(boardTasksEl, getCardFormTpl());
+      const taskCardEdit = new TaskEdit(task);
+      render(boardTasksEl, taskCardEdit.getElement());
     } else {
-      renderElement(boardTasksEl, getTaskCardTpl(task));
+      const taskCard = new Task(task);
+      render(boardTasksEl, taskCard.getElement());
     }
 
     tasks.shift();
@@ -40,17 +39,17 @@ const renderTasks = (editFirst) => {
 const mainEl = document.querySelector(`.main`);
 const controlEl = mainEl.querySelector(`.control`);
 
-renderElement(controlEl, getMenuTpl());
-renderElement(mainEl, getSearchTpl());
-renderElement(mainEl, getFilterTpl(filters));
-renderElement(mainEl, getBoardTpl());
+render(controlEl, new Menu().getElement());
+render(mainEl, new Search().getElement());
+render(mainEl, new Filter(filters).getElement());
+render(mainEl, new Board().getElement());
 
 const boardEl = mainEl.querySelector(`.board`);
 const boardTasksEl = boardEl.querySelector(`.board__tasks`);
 
-renderElement(boardEl, getSortTpl(), `afterbegin`);
+render(boardEl, new Sorting().getElement(), `begin`);
 renderTasks(true);
-renderElement(boardEl, getMoreBtnTpl());
+render(boardEl, new MoreBtn().getElement());
 
 const loadMoreEl = document.querySelector(`.load-more`);
 
