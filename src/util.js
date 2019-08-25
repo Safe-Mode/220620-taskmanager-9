@@ -24,4 +24,8 @@ const unrender = (element, cb) => {
   }
 };
 
-export {createElement, render, unrender};
+const isEscPressed = (key) => {
+  return key === `Escape` || key === `Esc`;
+};
+
+export {createElement, render, unrender, isEscPressed};

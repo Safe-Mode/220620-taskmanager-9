@@ -7,27 +7,57 @@ import {Task} from './components/task';
 import {TaskEdit} from './components/task-edit';
 import {MoreBtn} from './components/more-btn';
 import {tasks, filters} from './data';
-import {render} from './util';
+import {isEscPressed, render} from './util';
 
-const NUM_SCALE = 10;
 const CARDS_PER_PAGE = 8;
 
-const renderTasks = (editFirst) => {
-  for (let [index, task] of Object.entries(tasks)) {
-    index = parseInt(index, NUM_SCALE);
-
-    if (index === CARDS_PER_PAGE) {
+const renderTasks = () => {
+  for (let i = 0; i < tasks.length; i++) {
+    if (i === CARDS_PER_PAGE) {
       break;
     }
 
-    if (editFirst && !index) {
-      const taskCardEdit = new TaskEdit(task);
-      render(boardTasksEl, taskCardEdit.getElement());
-    } else {
-      const taskCard = new Task(task);
-      render(boardTasksEl, taskCard.getElement());
-    }
+    const onTaskEditBtnClick = (evt) => {
+      evt.preventDefault();
 
+      boardTasksEl.replaceChild(taskEditCardEl, taskCardEl);
+      document.addEventListener(`keydown`, onEscKeydown);
+    };
+
+    const onTaskEditFormSubmit = (evt) => {
+      evt.preventDefault();
+
+      boardTasksEl.replaceChild(taskCardEl, taskEditCardEl);
+      document.removeEventListener(`keydown`, onEscKeydown);
+    };
+
+    const onEscKeydown = (evt) => {
+      if (isEscPressed(evt.key)) {
+        boardTasksEl.replaceChild(taskCardEl, taskEditCardEl);
+        document.removeEventListener(`keydown`, onEscKeydown);
+      }
+    };
+
+    const taskCard = new Task(tasks[i]);
+    const taskEditCard = new TaskEdit(tasks[i]);
+    const taskCardEl = taskCard.getElement();
+    const taskEditBtnEl = taskCardEl.querySelector(`.card__btn--edit`);
+    const taskEditCardEl = taskEditCard.getElement();
+    const taskEditFormEl = taskEditCardEl.querySelector(`form`);
+    const taskEditTextarea = taskEditFormEl.querySelector(`textarea`);
+
+    taskEditBtnEl.addEventListener(`click`, onTaskEditBtnClick);
+    taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
+
+    taskEditTextarea.addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeydown);
+    });
+
+    taskEditTextarea.addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeydown);
+    });
+
+    render(boardTasksEl, taskCard.getElement());
     tasks.shift();
   }
 
@@ -48,12 +78,12 @@ const boardEl = mainEl.querySelector(`.board`);
 const boardTasksEl = boardEl.querySelector(`.board__tasks`);
 
 render(boardEl, new Sorting().getElement(), `begin`);
-renderTasks(true);
+renderTasks();
 render(boardEl, new MoreBtn().getElement());
 
 const loadMoreEl = document.querySelector(`.load-more`);
 
 loadMoreEl.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  renderTasks(false);
+  renderTasks();
 });
