@@ -1,13 +1,5 @@
 import {createElement} from '../util';
 
-// const getBoardTpl = () => {
-//   return `
-//     <div class="board container">
-//       <div class="board__tasks"></div>
-//     </div>
-//   `;
-// };
-
 class Board {
   constructor() {
     this._element = null;

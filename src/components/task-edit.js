@@ -1,3 +1,4 @@
+import {COLORS, DAYS} from './../const';
 import {createElement} from '../util';
 
 class TaskEdit {
@@ -58,7 +59,7 @@ class TaskEdit {
                         type="text"
                         placeholder=""
                         name="date"
-                        value="23 September 11:15 PM"
+                        value="${new Intl.DateTimeFormat(`en-GB`, {month: `long`, day: `numeric`}).format(this._dueDate).toUpperCase()} ${new Intl.DateTimeFormat(`en-GB`, {hour: `2-digit`, minute: `2-digit`, hour12: true}).format(this._dueDate).toUpperCase()}"
                       />
                     </label>
                   </fieldset>
@@ -69,129 +70,41 @@ class TaskEdit {
 
                   <fieldset class="card__repeat-days">
                     <div class="card__repeat-days-inner">
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-mo-4"
-                        name="repeat"
-                        value="mo"
-                      />
-                      <label class="card__repeat-day" for="repeat-mo-4"
-                        >mo</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-tu-4"
-                        name="repeat"
-                        value="tu"
-                        checked
-                      />
-                      <label class="card__repeat-day" for="repeat-tu-4"
-                        >tu</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-we-4"
-                        name="repeat"
-                        value="we"
-                      />
-                      <label class="card__repeat-day" for="repeat-we-4"
-                        >we</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-th-4"
-                        name="repeat"
-                        value="th"
-                      />
-                      <label class="card__repeat-day" for="repeat-th-4"
-                        >th</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-fr-4"
-                        name="repeat"
-                        value="fr"
-                        checked
-                      />
-                      <label class="card__repeat-day" for="repeat-fr-4"
-                        >fr</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        name="repeat"
-                        value="sa"
-                        id="repeat-sa-4"
-                      />
-                      <label class="card__repeat-day" for="repeat-sa-4"
-                        >sa</label
-                      >
-                      <input
-                        class="visually-hidden card__repeat-day-input"
-                        type="checkbox"
-                        id="repeat-su-4"
-                        name="repeat"
-                        value="su"
-                        checked
-                      />
-                      <label class="card__repeat-day" for="repeat-su-4"
-                        >su</label
-                      >
+                      ${DAYS.map((day) => `
+                        <input
+                          class="visually-hidden card__repeat-day-input"
+                          type="checkbox"
+                          id="repeat-${day}-4"
+                          name="repeat"
+                          value="${day}"
+                          ${(this._repeatingDays[day]) ? `checked` : ``}
+                        />
+                        <label class="card__repeat-day" for="repeat-${day}-4"
+                          >${day}</label
+                        >
+                      `).join(``)}
                     </div>
                   </fieldset>
                 </div>
 
                 <div class="card__hashtag">
                   <div class="card__hashtag-list">
-                    <span class="card__hashtag-inner">
-                      <input
-                        type="hidden"
-                        name="hashtag"
-                        value="repeat"
-                        class="card__hashtag-hidden-input"
-                      />
-                      <p class="card__hashtag-name">
-                        #repeat
-                      </p>
-                      <button type="button" class="card__hashtag-delete">
-                        delete
-                      </button>
-                    </span>
-
-                    <span class="card__hashtag-inner">
-                      <input
-                        type="hidden"
-                        name="hashtag"
-                        value="repeat"
-                        class="card__hashtag-hidden-input"
-                      />
-                      <p class="card__hashtag-name">
-                        #cinema
-                      </p>
-                      <button type="button" class="card__hashtag-delete">
-                        delete
-                      </button>
-                    </span>
-
-                    <span class="card__hashtag-inner">
-                      <input
-                        type="hidden"
-                        name="hashtag"
-                        value="repeat"
-                        class="card__hashtag-hidden-input"
-                      />
-                      <p class="card__hashtag-name">
-                        #entertaiment
-                      </p>
-                      <button type="button" class="card__hashtag-delete">
-                        delete
-                      </button>
-                    </span>
+                    ${this._tags.map((tag) => `
+                      <span class="card__hashtag-inner">
+                        <input
+                          type="hidden"
+                          name="hashtag"
+                          value="repeat"
+                          class="card__hashtag-hidden-input"
+                        />
+                        <p class="card__hashtag-name">
+                          #${tag}
+                        </p>
+                        <button type="button" class="card__hashtag-delete">
+                          delete
+                        </button>
+                      </span>
+                    `).join(``)}
                   </div>
 
                   <label>
@@ -208,67 +121,21 @@ class TaskEdit {
               <div class="card__colors-inner">
                 <h3 class="card__colors-title">Color</h3>
                 <div class="card__colors-wrap">
-                  <input
-                    type="radio"
-                    id="color-black-4"
-                    class="card__color-input card__color-input--black visually-hidden"
-                    name="color"
-                    value="black"
-                  />
-                  <label
-                    for="color-black-4"
-                    class="card__color card__color--black"
-                    >black</label
-                  >
-                  <input
-                    type="radio"
-                    id="color-yellow-4"
-                    class="card__color-input card__color-input--yellow visually-hidden"
-                    name="color"
-                    value="yellow"
-                    checked
-                  />
-                  <label
-                    for="color-yellow-4"
-                    class="card__color card__color--yellow"
-                    >yellow</label
-                  >
-                  <input
-                    type="radio"
-                    id="color-blue-4"
-                    class="card__color-input card__color-input--blue visually-hidden"
-                    name="color"
-                    value="blue"
-                  />
-                  <label
-                    for="color-blue-4"
-                    class="card__color card__color--blue"
-                    >blue</label
-                  >
-                  <input
-                    type="radio"
-                    id="color-green-4"
-                    class="card__color-input card__color-input--green visually-hidden"
-                    name="color"
-                    value="green"
-                  />
-                  <label
-                    for="color-green-4"
-                    class="card__color card__color--green"
-                    >green</label
-                  >
-                  <input
-                    type="radio"
-                    id="color-pink-4"
-                    class="card__color-input card__color-input--pink visually-hidden"
-                    name="color"
-                    value="pink"
-                  />
-                  <label
-                    for="color-pink-4"
-                    class="card__color card__color--pink"
-                    >pink</label
-                  >
+                  ${COLORS.map((color) => `
+                    <input
+                      type="radio"
+                      id="color-${color}-4"
+                      class="card__color-input card__color-input--${color} visually-hidden"
+                      name="color"
+                      value="${color}"
+                      ${(this._color === color) ? `checked` : ``}
+                    />
+                    <label
+                      for="color-${color}-4"
+                      class="card__color card__color--${color}"
+                      >${color}</label
+                    >
+                  `).join(``)}
                 </div>
               </div>
             </div>

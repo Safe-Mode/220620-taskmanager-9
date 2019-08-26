@@ -1,3 +1,4 @@
+import {CARDS_PER_PAGE} from './const';
 import {Menu} from './components/menu';
 import {Search} from './components/search';
 import {Filter} from './components/filter';
@@ -8,8 +9,6 @@ import {TaskEdit} from './components/task-edit';
 import {MoreBtn} from './components/more-btn';
 import {tasks, filters} from './data';
 import {isEscPressed, render} from './util';
-
-const CARDS_PER_PAGE = 8;
 
 const renderTasks = () => {
   for (let i = 0; i < tasks.length; i++) {
