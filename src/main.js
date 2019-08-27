@@ -1,4 +1,5 @@
 import {CARDS_PER_PAGE} from './const';
+import {isEscPressed, render} from './util';
 import {Menu} from './components/menu';
 import {Search} from './components/search';
 import {Filter} from './components/filter';
@@ -8,13 +9,26 @@ import {Task} from './components/task';
 import {TaskEdit} from './components/task-edit';
 import {MoreBtn} from './components/more-btn';
 import {tasks, filters} from './data';
-import {isEscPressed, render} from './util';
 
-const renderTasks = () => {
-  for (let i = 0; i < tasks.length; i++) {
-    if (i === CARDS_PER_PAGE) {
-      break;
-    }
+const mainEl = document.querySelector(`.main`);
+const controlEl = mainEl.querySelector(`.control`);
+const boardEl = new Board(tasks).getElement();
+const boardTasksEl = boardEl.querySelector(`.board__tasks`);
+const loadMoreEl = new MoreBtn().getElement();
+
+const renderTasks = (row = 1) => {
+  const beginIndex = (row - 1) * CARDS_PER_PAGE;
+  const renderedTasksCount = CARDS_PER_PAGE * row;
+  const endIndex = renderedTasksCount - 1;
+
+  for (let i = beginIndex; i <= endIndex && i < tasks.length; i++) {
+    const taskCard = new Task(tasks[i]);
+    const taskEditCard = new TaskEdit(tasks[i]);
+    const taskCardEl = taskCard.getElement();
+    const taskEditBtnEl = taskCardEl.querySelector(`.card__btn--edit`);
+    const taskEditCardEl = taskEditCard.getElement();
+    const taskEditFormEl = taskEditCardEl.querySelector(`form`);
+    const taskEditTextarea = taskEditFormEl.querySelector(`textarea`);
 
     const onTaskEditBtnClick = (evt) => {
       evt.preventDefault();
@@ -37,14 +51,6 @@ const renderTasks = () => {
       }
     };
 
-    const taskCard = new Task(tasks[i]);
-    const taskEditCard = new TaskEdit(tasks[i]);
-    const taskCardEl = taskCard.getElement();
-    const taskEditBtnEl = taskCardEl.querySelector(`.card__btn--edit`);
-    const taskEditCardEl = taskEditCard.getElement();
-    const taskEditFormEl = taskEditCardEl.querySelector(`form`);
-    const taskEditTextarea = taskEditFormEl.querySelector(`textarea`);
-
     taskEditBtnEl.addEventListener(`click`, onTaskEditBtnClick);
     taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
 
@@ -57,32 +63,25 @@ const renderTasks = () => {
     });
 
     render(boardTasksEl, taskCard.getElement());
-    tasks.shift();
   }
 
-  if (!tasks.length && loadMoreEl) {
+  if (renderedTasksCount >= tasks.length && loadMoreEl) {
     loadMoreEl.remove();
   }
-};
 
-const mainEl = document.querySelector(`.main`);
-const controlEl = mainEl.querySelector(`.control`);
+  return ++row;
+};
 
 render(controlEl, new Menu().getElement());
 render(mainEl, new Search().getElement());
 render(mainEl, new Filter(filters).getElement());
-render(mainEl, new Board().getElement());
-
-const boardEl = mainEl.querySelector(`.board`);
-const boardTasksEl = boardEl.querySelector(`.board__tasks`);
-
+render(mainEl, boardEl);
 render(boardEl, new Sorting().getElement(), `begin`);
-renderTasks();
-render(boardEl, new MoreBtn().getElement());
+render(boardEl, loadMoreEl);
 
-const loadMoreEl = document.querySelector(`.load-more`);
+let cardsRow = renderTasks();
 
 loadMoreEl.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  renderTasks();
+  cardsRow = renderTasks(cardsRow);
 });

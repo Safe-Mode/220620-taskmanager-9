@@ -1,14 +1,18 @@
 import {createElement} from '../util';
 
 class Board {
-  constructor() {
+  constructor(tasks) {
     this._element = null;
+    this._quantity = tasks.length;
   }
 
   getTemplate() {
     return `
       <div class="board container">
-        <div class="board__tasks"></div>
+        ${(this._quantity) ? `<div class="board__tasks"></div>` : `<p class="board__no-tasks">
+          Congratulations, all tasks were completed! To create a new click on
+          «add new task» button.
+        </p>`}
       </div>
     `;
   }
