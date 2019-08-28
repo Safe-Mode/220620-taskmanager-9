@@ -1,8 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class Menu {
+class Menu extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
@@ -32,15 +32,6 @@ class Menu {
         <label for="control__statistic" class="control__label">STATISTICS</label>
       </section>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

@@ -1,8 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class Task {
+class Task extends AbstractComponent {
   constructor({color, repeatingDays, isOverdue, description, dueDate, tags}) {
-    this._element = null;
+    super();
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._isOverdue = isOverdue;
@@ -69,15 +69,6 @@ class Task {
         </div>
       </article>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

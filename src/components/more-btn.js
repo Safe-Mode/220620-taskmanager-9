@@ -1,23 +1,14 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class MoreBtn {
+class MoreBtn extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
     return `
       <button class="load-more" type="button">load more</button>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

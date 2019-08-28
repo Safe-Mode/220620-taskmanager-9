@@ -1,8 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class Search {
+class Search extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
@@ -17,15 +17,6 @@ class Search {
         <label class="visually-hidden" for="search__input">Search</label>
       </section>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

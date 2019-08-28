@@ -1,9 +1,9 @@
 import {COLORS, DAYS} from './../const';
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class TaskEdit {
+class TaskEdit extends AbstractComponent {
   constructor({color, repeatingDays, isOverdue, description, dueDate, tags}) {
-    this._element = null;
+    super();
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._isOverdue = isOverdue;
@@ -148,15 +148,6 @@ class TaskEdit {
         </form>
       </article>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

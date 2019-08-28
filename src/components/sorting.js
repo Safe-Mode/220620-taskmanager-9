@@ -1,8 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class Sorting {
+class Sorting extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
@@ -13,15 +13,6 @@ class Sorting {
         <a href="#" class="board__filter">SORT BY DATE down</a>
       </div>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

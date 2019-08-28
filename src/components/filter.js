@@ -1,8 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class Filter {
+class Filter extends AbstractComponent {
   constructor(features) {
-    this._element = null;
+    super();
     this._features = features;
   }
 
@@ -24,15 +24,6 @@ class Filter {
         `).join(``)}
       </section>
     `;
-  }
-
-  getElement() {
-    this._element = (!this._element) ? createElement(this.getTemplate()) : this._element;
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
