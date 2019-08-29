@@ -1,7 +1,7 @@
 import {CARDS_PER_PAGE} from '../const';
 import {isEscPressed, render} from '../util';
 import {AbstractComponent} from './abstract-component';
-import {Sorting} from './sorting';
+import {Sort} from './sort';
 import {Task} from './task';
 import {TaskEdit} from './task-edit';
 import {MoreBtn} from './more-btn';
@@ -28,6 +28,12 @@ class BoardController {
   constructor(container, tasks) {
     this._container = container;
     this._tasks = tasks;
+    this._tasksToRender = tasks;
+    this._renderedTasks = 0;
+    this._sortEl = new Sort().getElement();
+    this._boardEl = new Board(this._tasks).getElement();
+    this._tasksEl = this._boardEl.querySelector(`.board__tasks`);
+    this._loadMoreEl = new MoreBtn().getElement();
   }
 
   _renderTask(tasksEl, task) {
@@ -74,38 +80,63 @@ class BoardController {
     render(tasksEl, taskCard.getElement());
   }
 
+  _renderTasks(isContinues = true) {
+    const quantity = (isContinues) ? CARDS_PER_PAGE : this._renderedTasks;
+    this._renderedTasks = (isContinues) ? this._renderedTasks : 0;
+    const endIndex = this._renderedTasks + quantity;
+
+    for (let i = this._renderedTasks; i < endIndex && i < this._tasksToRender.length; i++) {
+      this._renderTask(this._tasksEl, this._tasksToRender[i]);
+      this._renderedTasks++;
+    }
+
+    if (this._renderedTasks >= this._tasksToRender.length && this._loadMoreEl) {
+      this._loadMoreEl.remove();
+    }
+  }
+
+  _onSortLinkClick(evt) {
+    evt.preventDefault();
+
+    const sortType = evt.target.dataset.type;
+
+    if (sortType) {
+      const tasksCopy = this._tasks.slice();
+      this._tasksEl.innerHTML = ``;
+
+      switch (sortType) {
+        case `default`:
+          this._tasksToRender = this._tasks;
+          this._renderTasks(false);
+          break;
+        case `date-up`:
+          const dateUpTasks = tasksCopy.sort((first, second) => first.dueDate - second.dueDate);
+
+          this._tasksToRender = dateUpTasks;
+          this._renderTasks(false);
+          break;
+        case `date-down`:
+          const dateDownTasks = tasksCopy.sort((first, second) => second.dueDate - first.dueDate);
+
+          this._tasksToRender = dateDownTasks;
+          this._renderTasks(false);
+          break;
+      }
+    }
+  }
+
   init() {
-    const boardEl = new Board(this._tasks).getElement();
-    const tasksEl = boardEl.querySelector(`.board__tasks`);
-    const loadMoreEl = new MoreBtn().getElement();
+    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    render(this._boardEl, this._sortEl, `begin`);
+    this._renderTasks();
 
-    const renderTasks = (row = 1) => {
-      const beginIndex = (row - 1) * CARDS_PER_PAGE;
-      const renderedTasksCount = CARDS_PER_PAGE * row;
-      const endIndex = renderedTasksCount - 1;
-
-      for (let i = beginIndex; i <= endIndex && i < this._tasks.length; i++) {
-        this._renderTask(tasksEl, this._tasks[i]);
-      }
-
-      if (renderedTasksCount >= this._tasks.length && loadMoreEl) {
-        loadMoreEl.remove();
-      }
-
-      return ++row;
-    };
-
-    render(boardEl, new Sorting().getElement(), `begin`);
-
-    let cardsRow = renderTasks();
-
-    loadMoreEl.addEventListener(`click`, (evt) => {
+    this._loadMoreEl.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      cardsRow = renderTasks(cardsRow);
+      this._renderTasks();
     });
 
-    render(boardEl, loadMoreEl);
-    render(this._container, boardEl);
+    render(this._boardEl, this._loadMoreEl);
+    render(this._container, this._boardEl);
   }
 }
 
