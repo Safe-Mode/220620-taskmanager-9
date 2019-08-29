@@ -1,10 +1,6 @@
 import {AbstractComponent} from './abstract-component';
 
 class Search extends AbstractComponent {
-  constructor() {
-    super();
-  }
-
   getTemplate() {
     return `
       <section class="main__search search container">

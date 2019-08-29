@@ -104,6 +104,7 @@ class BoardController {
       cardsRow = renderTasks(cardsRow);
     });
 
+    render(boardEl, loadMoreEl);
     render(this._container, boardEl);
   }
 }
