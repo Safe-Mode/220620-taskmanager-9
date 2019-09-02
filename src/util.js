@@ -5,6 +5,13 @@ const createElement = (template) => {
 };
 
 const render = (container, element, position = `end`) => {
+  if (typeof position === `number`) {
+    console.log(position);
+
+    container.replaceChild(element, container.children[position]);
+    return;
+  }
+
   switch (position) {
     case `end`:
       container.append(element);
@@ -13,7 +20,7 @@ const render = (container, element, position = `end`) => {
       container.prepend(element);
       break;
     default:
-      throw new Error(`<begin> or <end> positions are valid`);
+      throw new Error(`"begin", "end" or <index> positions are valid`);
   }
 };
 

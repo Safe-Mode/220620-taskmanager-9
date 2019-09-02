@@ -15,6 +15,11 @@ class BoardController {
     this._boardEl = new Board(this._tasks).getElement();
     this._tasksEl = this._boardEl.querySelector(`.board__tasks`);
     this._loadMoreEl = new MoreBtn().getElement();
+    this._onDataChange = this._onDataChange.bind(this);
+  }
+
+  _renderTask(task, index) {
+    new TaskController(this._tasksEl, task, this._onDataChange, index).init();
   }
 
   _renderTasks(isContinues = true) {
@@ -23,7 +28,7 @@ class BoardController {
     const endIndex = this._renderedTasks + quantity;
 
     for (let i = this._renderedTasks; i < endIndex && i < this._tasksToRender.length; i++) {
-      new TaskController(this._tasksEl, this._tasksToRender[i]).init();
+      this._renderTask(this._tasksToRender[i]);
       this._renderedTasks++;
     }
 
@@ -60,6 +65,12 @@ class BoardController {
           break;
       }
     }
+  }
+
+  _onDataChange(newData, oldData) {
+    const taskIndex = this._tasks.findIndex((task) => task === oldData);
+    this._tasks[taskIndex] = newData;
+    this._renderTask(this._tasks[taskIndex], taskIndex);
   }
 
   init() {

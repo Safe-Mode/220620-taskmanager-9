@@ -3,15 +3,13 @@ import {Task} from '../components/task';
 import {TaskEdit} from '../components/task-edit';
 
 class TaskController {
-  constructor(container, data) {
+  constructor(container, data, onDataChange, position) {
     this._container = container;
     this._data = data;
     this._task = new Task(data);
     this._taskEdit = new TaskEdit(data);
-  }
-
-  _onDataChange() {
-
+    this._onDataChange = onDataChange;
+    this._position = position;
   }
 
   _onChangeView() {
@@ -23,7 +21,7 @@ class TaskController {
     const taskEditEl = this._taskEdit.getElement();
     const taskEditBtnEl = taskEl.querySelector(`.card__btn--edit`);
     const taskEditFormEl = taskEditEl.querySelector(`form`);
-    const taskEditTextarea = taskEditFormEl.querySelector(`textarea`);
+    const taskEditTextEl = taskEditFormEl.querySelector(`textarea`);
 
     const onTaskEditBtnClick = (evt) => {
       evt.preventDefault();
@@ -35,7 +33,30 @@ class TaskController {
     const onTaskEditFormSubmit = (evt) => {
       evt.preventDefault();
 
-      this._container.replaceChild(taskEl, taskEditEl);
+      const formData = new FormData(evt.target);
+
+      const entry = {
+        description: formData.get(`text`),
+        dueDate: new Date(formData.get(`date`)),
+        repeatingDays: formData
+          .getAll(`repeat`)
+          .reduce((days, day) => {
+            days[day] = true;
+            return days;
+          }, {
+            mo: false,
+            tu: false,
+            we: false,
+            th: false,
+            fr: false,
+            sa: false,
+            su: false,
+          }),
+        tags: formData.getAll(`hashtag`),
+        color: formData.get(`color`),
+      };
+
+      this._onDataChange(entry, this._data);
       document.removeEventListener(`keydown`, onEscKeydown);
     };
 
@@ -49,15 +70,15 @@ class TaskController {
     taskEditBtnEl.addEventListener(`click`, onTaskEditBtnClick);
     taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
 
-    taskEditTextarea.addEventListener(`focus`, () => {
+    taskEditTextEl.addEventListener(`focus`, () => {
       document.removeEventListener(`keydown`, onEscKeydown);
     });
 
-    taskEditTextarea.addEventListener(`blur`, () => {
+    taskEditTextEl.addEventListener(`blur`, () => {
       document.addEventListener(`keydown`, onEscKeydown);
     });
 
-    render(this._container, taskEl);
+    render(this._container, taskEl, this._position);
   }
 }
 
