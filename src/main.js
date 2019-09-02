@@ -2,7 +2,7 @@ import {render} from './util';
 import {Menu} from './components/menu';
 import {Search} from './components/search';
 import {Filter} from './components/filter';
-import {BoardController} from './components/board';
+import {BoardController} from './controllers/board';
 import {tasks, filters} from './data';
 
 const mainEl = document.querySelector(`.main`);
