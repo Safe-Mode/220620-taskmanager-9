@@ -1,4 +1,5 @@
 import {COLORS, DAYS} from './../const';
+import {isEnterPressed} from './../util';
 import {AbstractComponent} from './abstract-component';
 
 class TaskEdit extends AbstractComponent {
@@ -10,6 +11,9 @@ class TaskEdit extends AbstractComponent {
     this._description = description;
     this._dueDate = dueDate;
     this._tags = tags;
+
+    this._addHashtag();
+    this._removeHashtag();
   }
 
   getTemplate() {
@@ -148,6 +152,54 @@ class TaskEdit extends AbstractComponent {
         </form>
       </article>
     `;
+  }
+
+  _removeHashtag() {
+    this
+      .getElement()
+      .querySelector(`.card__hashtag-list`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        evt.target
+          .closest(`.card__hashtag-inner`)
+          .remove();
+      });
+  }
+
+  _addHashtag() {
+    this
+      .getElement()
+      .querySelector(`.card__hashtag-input`)
+      .addEventListener(`keydown`, (evt) => {
+        if (isEnterPressed(evt.key)) {
+          evt.preventDefault();
+
+          if (evt.target.value) {
+            this
+              .getElement()
+              .querySelector(`.card__hashtag-list`)
+              .insertAdjacentHTML(`beforeend`, `
+                <span class="card__hashtag-inner">
+                  <input
+                    type="hidden"
+                    name="hashtag"
+                    value="repeat"
+                    class="card__hashtag-hidden-input"
+                  />
+                  <p class="card__hashtag-name">
+                    #${evt.target.value}
+                  </p>
+                  <button type="button" class="card__hashtag-delete">
+                    delete
+                  </button>
+                </span>
+              `);
+
+            evt.target.value = ``;
+          }
+        }
+      });
   }
 }
 

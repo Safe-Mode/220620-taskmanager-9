@@ -6,8 +6,6 @@ const createElement = (template) => {
 
 const render = (container, element, position = `end`) => {
   if (typeof position === `number`) {
-    console.log(position);
-
     container.replaceChild(element, container.children[position]);
     return;
   }
@@ -35,4 +33,8 @@ const isEscPressed = (key) => {
   return key === `Escape` || key === `Esc`;
 };
 
-export {createElement, render, unrender, isEscPressed};
+const isEnterPressed = (key) => {
+  return key === `Enter`;
+};
+
+export {createElement, render, unrender, isEscPressed, isEnterPressed};
