@@ -3,22 +3,29 @@ import {isEnterPressed} from './../util';
 import {AbstractComponent} from './abstract-component';
 
 class TaskEdit extends AbstractComponent {
-  constructor({color, repeatingDays, isOverdue, description, dueDate, tags}) {
+  constructor({color, repeatingDays, description, dueDate, tags}) {
     super();
     this._color = color;
     this._repeatingDays = repeatingDays;
-    this._isOverdue = isOverdue;
+    this._isRepeating = Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
     this._description = description;
-    this._dueDate = dueDate;
+    this._isOverdue = Date.now() > dueDate;
+    this._dueDate = new Date(dueDate);
+    this._hasDate = Boolean(this._dueDate);
     this._tags = tags;
+    this._element = this.getElement();
+    this._colors = [...this._element.querySelectorAll(`.card__color-input`)].map((input) => input.value);
 
     this._addHashtag();
     this._removeHashtag();
+    this._switchDateFlag();
+    this._switchRepeatFlag();
+    this._colorize();
   }
 
   getTemplate() {
     return `
-      <article class="card card--edit card--${this._color} ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]) ? `card--repeat` : ``} ${(this._isOverdue) ? `card--deadline` : ``}">
+      <article class="card card--edit card--${this._color} ${(this._isRepeating) ? `card--repeat` : ``} ${(this._isOverdue) ? `card--deadline` : ``}">
         <form class="card__form" method="get">
           <div class="card__inner">
             <div class="card__control">
@@ -53,10 +60,10 @@ class TaskEdit extends AbstractComponent {
               <div class="card__details">
                 <div class="card__dates">
                   <button class="card__date-deadline-toggle" type="button">
-                    date: <span class="card__date-status">yes</span>
+                    date: <span class="card__date-status">${(this._dueDate) ? `yes` : `no`}</span>
                   </button>
 
-                  <fieldset class="card__date-deadline">
+                  <fieldset class="card__date-deadline ${(this._dueDate) ? `` : `visually-hidden`}">
                     <label class="card__input-deadline-wrap">
                       <input
                         class="card__date"
@@ -69,10 +76,10 @@ class TaskEdit extends AbstractComponent {
                   </fieldset>
 
                   <button class="card__repeat-toggle" type="button">
-                    repeat:<span class="card__repeat-status">yes</span>
+                    repeat:<span class="card__repeat-status">${(this._isRepeating) ? `yes` : `no`}</span>
                   </button>
 
-                  <fieldset class="card__repeat-days">
+                  <fieldset class="card__repeat-days ${(this._isRepeating) ? `` : `visually-hidden`}">
                     <div class="card__repeat-days-inner">
                       ${DAYS.map((day) => `
                         <input
@@ -98,7 +105,7 @@ class TaskEdit extends AbstractComponent {
                         <input
                           type="hidden"
                           name="hashtag"
-                          value="repeat"
+                          value="${tag}"
                           class="card__hashtag-hidden-input"
                         />
                         <p class="card__hashtag-name">
@@ -155,8 +162,7 @@ class TaskEdit extends AbstractComponent {
   }
 
   _removeHashtag() {
-    this
-      .getElement()
+    this._element
       .querySelector(`.card__hashtag-list`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
@@ -168,23 +174,21 @@ class TaskEdit extends AbstractComponent {
   }
 
   _addHashtag() {
-    this
-      .getElement()
+    this._element
       .querySelector(`.card__hashtag-input`)
       .addEventListener(`keydown`, (evt) => {
         if (isEnterPressed(evt.key)) {
           evt.preventDefault();
 
           if (evt.target.value) {
-            this
-              .getElement()
+            this._element
               .querySelector(`.card__hashtag-list`)
               .insertAdjacentHTML(`beforeend`, `
                 <span class="card__hashtag-inner">
                   <input
                     type="hidden"
                     name="hashtag"
-                    value="repeat"
+                    value="${evt.target.value}"
                     class="card__hashtag-hidden-input"
                   />
                   <p class="card__hashtag-name">
@@ -198,6 +202,62 @@ class TaskEdit extends AbstractComponent {
 
             evt.target.value = ``;
           }
+        }
+      });
+  }
+
+  _switchDateFlag() {
+    this._element
+      .querySelector(`.card__date-deadline-toggle`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        const clsMethod = (this._hasDate) ? `add` : `remove`;
+        const container = evt.currentTarget.closest(`.card__dates`);
+
+        this._hasDate = !this._hasDate;
+        container.querySelector(`.card__date`).disabled = !this._hasDate;
+        evt.currentTarget.querySelector(`.card__date-status`).innerText = (this._hasDate) ? `yes` : `no`;
+
+        container
+          .querySelector(`.card__date-deadline`)
+          .classList[clsMethod](`visually-hidden`);
+      });
+  }
+
+  _switchRepeatFlag() {
+    this._element
+      .querySelector(`.card__repeat-toggle`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        const clsMethod = (this._isRepeating) ? `add` : `remove`;
+        const container = evt.currentTarget.closest(`.card__dates`);
+
+        this._isRepeating = !this._isRepeating;
+
+        container.querySelectorAll(`.card__repeat-day-input`).forEach((input) => {
+          input.disabled = !this._isRepeating;
+        });
+
+        evt.currentTarget.querySelector(`.card__repeat-status`).innerText = (this._isRepeating) ? `yes` : `no`;
+
+        evt.currentTarget
+          .closest(`.card__dates`)
+          .querySelector(`.card__repeat-days`)
+          .classList[clsMethod](`visually-hidden`);
+      });
+  }
+
+  _colorize() {
+    this._element
+      .querySelector(`.card__colors-wrap`)
+      .addEventListener(`input`, (evt) => {
+        const newColor = `card--${evt.target.value}`;
+
+        for (let color of this._colors) {
+          const oldColor = `card--${color}`;
+          this._element.classList.replace(oldColor, newColor);
         }
       });
   }

@@ -1,13 +1,13 @@
 import {AbstractComponent} from './abstract-component';
 
 class Task extends AbstractComponent {
-  constructor({color, repeatingDays, isOverdue, description, dueDate, tags}) {
+  constructor({color, repeatingDays, description, dueDate, tags}) {
     super();
     this._color = color;
     this._repeatingDays = repeatingDays;
-    this._isOverdue = isOverdue;
     this._description = description;
-    this._dueDate = dueDate;
+    this._isOverdue = Date.now() > dueDate;
+    this._dueDate = new Date(dueDate);
     this._tags = tags;
   }
 

@@ -1,8 +1,3 @@
-const dueDate = Date.now() + [-1, 1][Math.floor(Math.random() * 2)] * Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000;
-const isOverdue = () => {
-  return Date.now() > dueDate;
-};
-
 const getRandomTask = () => {
   return {
     description: [
@@ -10,7 +5,7 @@ const getRandomTask = () => {
       `Сделать домашку`,
       `Пройти интенсив на соточку`,
     ][Math.floor(Math.random() * 3)],
-    dueDate,
+    dueDate: Date.now() + [-1, 1][Math.floor(Math.random() * 2)] * Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
     repeatingDays: {
       mo: false,
       tu: false,
@@ -35,8 +30,7 @@ const getRandomTask = () => {
       `pink`,
     ][Math.floor(Math.random() * 5)],
     isFavorite: Boolean(Math.round(Math.random())),
-    isArchive: Boolean(Math.round(Math.random())),
-    isOverdue: isOverdue(),
+    isArchive: Boolean(Math.round(Math.random()))
   };
 };
 
