@@ -3,17 +3,20 @@ import {Task} from '../components/task';
 import {TaskEdit} from '../components/task-edit';
 
 class TaskController {
-  constructor(container, data, onDataChange, position) {
+  constructor(container, data, onDataChange, onChangeView, position) {
     this._container = container;
     this._data = data;
     this._task = new Task(data);
     this._taskEdit = new TaskEdit(data);
     this._onDataChange = onDataChange;
+    this._onChangeView = onChangeView;
     this._position = position;
   }
 
-  _onChangeView() {
-
+  setDefaultView() {
+    if (this._container.contains(this._taskEdit.getElement())) {
+      this._container.replaceChild(this._task.getElement(), this._taskEdit.getElement());
+    }
   }
 
   init() {
@@ -26,6 +29,7 @@ class TaskController {
     const onTaskEditBtnClick = (evt) => {
       evt.preventDefault();
 
+      this._onChangeView();
       this._container.replaceChild(taskEditEl, taskEl);
       document.addEventListener(`keydown`, onEscKeydown);
     };
@@ -62,7 +66,7 @@ class TaskController {
 
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
-        this._container.replaceChild(taskEl, taskEditEl);
+        this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
