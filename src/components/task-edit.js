@@ -13,10 +13,12 @@ class TaskEdit extends AbstractComponent {
     this._dueDate = new Date(dueDate);
     this._hasDate = Boolean(this._dueDate);
     this._tags = tags;
-    this._element = this.getElement();
-    this._colors = [...this._element.querySelectorAll(`.card__color-input`)].map((input) => input.value);
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
+    this._colors = [...this
+      .getElement()
+      .querySelectorAll(`.card__color-input`)]
+      .map((input) => input.value);
 
     this._addHashtag();
     this._removeHashtag();
