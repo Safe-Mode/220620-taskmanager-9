@@ -3,7 +3,7 @@ import {isEnterPressed} from './../util';
 import {AbstractComponent} from './abstract-component';
 
 class TaskEdit extends AbstractComponent {
-  constructor({color, repeatingDays, description, dueDate, tags}) {
+  constructor({color, repeatingDays, description, dueDate, tags, isArchive, isFavorite}) {
     super();
     this._color = color;
     this._repeatingDays = repeatingDays;
@@ -15,6 +15,8 @@ class TaskEdit extends AbstractComponent {
     this._tags = tags;
     this._element = this.getElement();
     this._colors = [...this._element.querySelectorAll(`.card__color-input`)].map((input) => input.value);
+    this._isArchive = isArchive;
+    this._isFavorite = isFavorite;
 
     this._addHashtag();
     this._removeHashtag();
@@ -29,12 +31,12 @@ class TaskEdit extends AbstractComponent {
         <form class="card__form" method="get">
           <div class="card__inner">
             <div class="card__control">
-              <button type="button" class="card__btn card__btn--archive">
+              <button type="button" class="card__btn card__btn--archive ${(this._isArchive) ? `` : `card__btn--disabled`}">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--favorites card__btn--disabled"
+                class="card__btn card__btn--favorites ${(this._isFavorite) ? `` : `card__btn--disabled`}"
               >
                 favorites
               </button>

@@ -1,7 +1,7 @@
 import {AbstractComponent} from './abstract-component';
 
 class Task extends AbstractComponent {
-  constructor({color, repeatingDays, description, dueDate, tags}) {
+  constructor({color, repeatingDays, description, dueDate, tags, isArchive, isFavorite}) {
     super();
     this._color = color;
     this._repeatingDays = repeatingDays;
@@ -9,6 +9,8 @@ class Task extends AbstractComponent {
     this._isOverdue = Date.now() > dueDate;
     this._dueDate = new Date(dueDate);
     this._tags = tags;
+    this._isArchive = isArchive;
+    this._isFavorite = isFavorite;
   }
 
   getTemplate() {
@@ -20,12 +22,12 @@ class Task extends AbstractComponent {
               <button type="button" class="card__btn card__btn--edit">
                 edit
               </button>
-              <button type="button" class="card__btn card__btn--archive">
+              <button type="button" class="card__btn card__btn--archive ${(this._isArchive) ? `` : `card__btn--disabled`}">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn card__btn--favorites card__btn--disabled"
+                class="card__btn card__btn--favorites ${(this._isFavorite) ? `` : `card__btn--disabled`}"
               >
                 favorites
               </button>
