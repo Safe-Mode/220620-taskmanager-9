@@ -6,8 +6,8 @@ class Task extends AbstractComponent {
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._description = description;
-    this._isOverdue = Date.now() > dueDate;
-    this._dueDate = new Date(dueDate);
+    this._dueDate = (dueDate) ? new Date(dueDate) : null;
+    this._isOverdue = (this._dueDate) ? Date.now() > this._dueDate : false;
     this._tags = tags;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
