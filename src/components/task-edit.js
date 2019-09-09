@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {COLORS, DAYS} from './../const';
 import {isEnterPressed} from './../util';
 import {AbstractComponent} from './abstract-component';
@@ -19,7 +20,6 @@ class TaskEdit extends AbstractComponent {
       .getElement()
       .querySelectorAll(`.card__color-input`)]
       .map((input) => input.value);
-
     this._addHashtag();
     this._removeHashtag();
     this._switchDateFlag();
@@ -74,7 +74,7 @@ class TaskEdit extends AbstractComponent {
                         type="text"
                         placeholder=""
                         name="date"
-                        value="${new Intl.DateTimeFormat(`en-GB`, {month: `long`, day: `numeric`}).format(this._dueDate).toUpperCase()} ${new Intl.DateTimeFormat(`en-GB`, {hour: `2-digit`, minute: `2-digit`, hour12: true}).format(this._dueDate).toUpperCase()}"
+                        value="${moment(this._dueDate).format(`LL`).toUpperCase()}"
                       />
                     </label>
                   </fieldset>

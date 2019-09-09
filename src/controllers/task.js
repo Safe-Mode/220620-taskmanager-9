@@ -1,3 +1,5 @@
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.css';
 import {isEscPressed, render} from '../util';
 import {Task} from '../components/task';
 import {TaskEdit} from '../components/task-edit';
@@ -50,7 +52,7 @@ class TaskController {
 
       const entry = {
         description: formData.get(`text`),
-        dueDate: new Date(formData.get(`date`) + new Date().getFullYear()).getTime(),
+        dueDate: formData.get(`date`),
         repeatingDays: formData
           .getAll(`repeat`)
           .reduce((days, day) => {
@@ -113,6 +115,12 @@ class TaskController {
       this._data.isFavorite = !this._data.isFavorite;
       this._toggleActiveBtnState(evt.target);
     };
+
+    flatpickr(taskEditEl.querySelector(`.card__date`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._data.dueDate,
+    });
 
     taskEditBtnEl.addEventListener(`click`, onTaskEditBtnClick);
     taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
