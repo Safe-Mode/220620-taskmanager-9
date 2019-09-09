@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {AbstractComponent} from './abstract-component';
 
 class Task extends AbstractComponent {
@@ -48,8 +49,8 @@ class Task extends AbstractComponent {
                 <div class="card__dates">
                   <div class="card__date-deadline">
                     <p class="card__input-deadline-wrap">
-                      <span class="card__date">${new Intl.DateTimeFormat(`en-GB`, {month: `long`, day: `numeric`}).format(this._dueDate).toUpperCase()}</span>
-                      <span class="card__time">${new Intl.DateTimeFormat(`en-GB`, {hour: `2-digit`, minute: `2-digit`, hour12: true}).format(this._dueDate).toUpperCase()}</span>
+                      <span class="card__date">${moment(this._dueDate).format(`LL`).toUpperCase()}</span>
+                      <span class="card__time">${moment(this._dueDate).format(`h:mm a`).toUpperCase()}</span>
                     </p>
                   </div>
                 </div>
