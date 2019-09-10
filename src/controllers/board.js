@@ -12,8 +12,8 @@ class BoardController {
     this._tasksToRender = tasks;
     this._renderedTasks = 0;
     this._sortEl = new Sort().getElement();
-    this._boardEl = new Board(this._tasks).getElement();
-    this._tasksEl = this._boardEl.querySelector(`.board__tasks`);
+    this._board = new Board(this._tasks);
+    this._tasksEl = this._board.getElement().querySelector(`.board__tasks`);
     this._loadMoreEl = new MoreBtn().getElement();
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
@@ -82,18 +82,31 @@ class BoardController {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  init() {
-    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
-    render(this._boardEl, this._sortEl, `begin`);
-    this._renderTasks();
+  show() {
+    this._board
+      .getElement()
+      .classList.remove(`visually-hidden`);
+  }
 
+  hide() {
+    this._board
+      .getElement()
+      .classList.add(`visually-hidden`);
+  }
+
+  init() {
+    const boardEl = this._board.getElement();
+
+    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
     this._loadMoreEl.addEventListener(`click`, (evt) => {
       evt.preventDefault();
       this._renderTasks();
     });
 
-    render(this._boardEl, this._loadMoreEl);
-    render(this._container, this._boardEl);
+    this._renderTasks();
+    render(boardEl, this._sortEl, `begin`);
+    render(boardEl, this._loadMoreEl);
+    render(this._container, boardEl);
   }
 }
 
