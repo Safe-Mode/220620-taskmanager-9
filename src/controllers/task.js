@@ -36,6 +36,7 @@ class TaskController {
     const taskFavoritesBtnEl = taskEl.querySelector(`.card__btn--favorites`);
     const editArchiveBtnEl = taskEditEl.querySelector(`.card__btn--archive`);
     const editFavoritesBtnEl = taskEditEl.querySelector(`.card__btn--favorites`);
+    const taskDeleteBtnEl = taskEditEl.querySelector(`.card__delete`);
 
     const onTaskEditBtnClick = (evt) => {
       evt.preventDefault();
@@ -116,6 +117,11 @@ class TaskController {
       this._toggleActiveBtnState(evt.target);
     };
 
+    const onCardDeleteBtnClick = (evt) => {
+      evt.preventDefault();
+      this._onDataChange(null, this._data);
+    };
+
     flatpickr(taskEditEl.querySelector(`.card__date`), {
       altInput: true,
       allowInput: true,
@@ -137,6 +143,7 @@ class TaskController {
     editArchiveBtnEl.addEventListener(`click`, onEditArchiveBtnClick);
     taskFavoritesBtnEl.addEventListener(`click`, onTaskFavoritesBtnClick);
     editFavoritesBtnEl.addEventListener(`click`, onEditFavoritesBtnClick);
+    taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
 
     render(this._container, taskEl, this._position);
   }

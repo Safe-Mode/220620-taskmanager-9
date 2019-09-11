@@ -1,5 +1,5 @@
 import {CARDS_PER_PAGE} from '../const';
-import {render} from '../util';
+import {render, unrender} from '../util';
 import {Board} from '../components/board';
 import {Sort} from '../components/sort';
 import {MoreBtn} from '../components/more-btn';
@@ -18,6 +18,10 @@ class BoardController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
     this._subscriptions = [];
+  }
+
+  _unrenderTask(index) {
+    unrender(this._tasksEl.children[index]);
   }
 
   _renderTask(task, index) {
@@ -74,8 +78,16 @@ class BoardController {
 
   _onDataChange(newData, oldData) {
     const taskIndex = this._tasks.findIndex((task) => task === oldData);
-    this._tasks[taskIndex] = newData;
-    this._renderTask(this._tasks[taskIndex], taskIndex);
+
+    if (newData === null) {
+      this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
+      this._tasksToRender = this._tasks;
+      this._unrenderTask(taskIndex);
+      this._renderedTasks--;
+    } else {
+      this._tasks[taskIndex] = newData;
+      this._renderTask(this._tasks[taskIndex], taskIndex);
+    }
   }
 
   _onChangeView() {
