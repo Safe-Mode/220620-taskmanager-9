@@ -30,61 +30,105 @@ class TaskController {
 
   init() {
     const taskEl = this._task.getElement();
-    const taskEditEl = this._taskEdit.getElement();
     const taskEditBtnEl = taskEl.querySelector(`.card__btn--edit`);
-    const taskEditFormEl = taskEditEl.querySelector(`form`);
-    const taskEditTextEl = taskEditFormEl.querySelector(`textarea`);
     const taskArchiveBtnEl = taskEl.querySelector(`.card__btn--archive`);
     const taskFavoritesBtnEl = taskEl.querySelector(`.card__btn--favorites`);
-    const editArchiveBtnEl = taskEditEl.querySelector(`.card__btn--archive`);
-    const editFavoritesBtnEl = taskEditEl.querySelector(`.card__btn--favorites`);
-    const taskDeleteBtnEl = taskEditEl.querySelector(`.card__delete`);
-
-    const onTaskEditBtnClick = (evt) => {
-      evt.preventDefault();
-
-      this._onChangeView();
-      this._container.replaceChild(taskEditEl, taskEl);
-      document.addEventListener(`keydown`, onEscKeydown);
-    };
-
-    const onTaskEditFormSubmit = (evt) => {
-      evt.preventDefault();
-
-      const formData = new FormData(evt.target);
-
-      const entry = {
-        description: formData.get(`text`),
-        dueDate: formData.get(`date`),
-        repeatingDays: formData
-          .getAll(`repeat`)
-          .reduce((days, day) => {
-            days[day] = true;
-            return days;
-          }, {
-            mo: false,
-            tu: false,
-            we: false,
-            th: false,
-            fr: false,
-            sa: false,
-            su: false,
-          }),
-        tags: formData.getAll(`hashtag`),
-        color: formData.get(`color`),
-        isArchive: this._data.isArchive,
-        isFavorite: this._data.isFavorite,
-      };
-
-      this._onDataChange(entry, (this._mode === `add`) ? null : this._data);
-      document.removeEventListener(`keydown`, onEscKeydown);
-    };
 
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
         this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
+    };
+
+    const onTaskEditBtnClick = (evt) => {
+      evt.preventDefault();
+
+      this._onChangeView();
+      this._taskEdit = new TaskEdit(this._data);
+
+      const taskEditEl = this._taskEdit.getElement();
+      const taskEditFormEl = taskEditEl.querySelector(`form`);
+      const taskEditTextEl = taskEditFormEl.querySelector(`textarea`);
+      const editArchiveBtnEl = taskEditEl.querySelector(`.card__btn--archive`);
+      const editFavoritesBtnEl = taskEditEl.querySelector(`.card__btn--favorites`);
+      const taskDeleteBtnEl = taskEditEl.querySelector(`.card__delete`);
+      const taskEditDateEl = taskEditEl.querySelector(`.card__date`);
+
+      const onTaskEditFormSubmit = (editEvt) => {
+        editEvt.preventDefault();
+
+        const formData = new FormData(editEvt.target);
+
+        const entry = {
+          description: formData.get(`text`),
+          dueDate: formData.get(`date`),
+          repeatingDays: formData
+            .getAll(`repeat`)
+            .reduce((days, day) => {
+              days[day] = true;
+              return days;
+            }, {
+              mo: false,
+              tu: false,
+              we: false,
+              th: false,
+              fr: false,
+              sa: false,
+              su: false,
+            }),
+          tags: formData.getAll(`hashtag`),
+          color: formData.get(`color`),
+          isArchive: this._data.isArchive,
+          isFavorite: this._data.isFavorite,
+        };
+
+        this._onDataChange(entry, (this._mode === `add`) ? null : this._data);
+        document.removeEventListener(`keydown`, onEscKeydown);
+      };
+
+      const onEditArchiveBtnClick = (archiveEvt) => {
+        archiveEvt.preventDefault();
+
+        this._data.isArchive = !this._data.isArchive;
+        this._toggleActiveBtnState(archiveEvt.target);
+      };
+
+      const onEditFavoritesBtnClick = (favoriteEvt) => {
+        favoriteEvt.preventDefault();
+
+        this._data.isFavorite = !this._data.isFavorite;
+        this._toggleActiveBtnState(favoriteEvt.target);
+      };
+
+      const onCardDeleteBtnClick = (deleteEvt) => {
+        deleteEvt.preventDefault();
+        this._onDataChange(null, this._data);
+      };
+
+      if (taskEditDateEl) {
+        flatpickr(taskEditDateEl, {
+          altInput: true,
+          allowInput: true,
+          defaultDate: this._data.dueDate,
+        });
+      }
+
+      taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
+      editArchiveBtnEl.addEventListener(`click`, onEditArchiveBtnClick);
+      editFavoritesBtnEl.addEventListener(`click`, onEditFavoritesBtnClick);
+      taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
+
+      taskEditTextEl.addEventListener(`focus`, () => {
+        document.removeEventListener(`keydown`, onEscKeydown);
+      });
+
+      taskEditTextEl.addEventListener(`blur`, () => {
+        document.addEventListener(`keydown`, onEscKeydown);
+      });
+
+      this._container.replaceChild(taskEditEl, taskEl);
+      document.addEventListener(`keydown`, onEscKeydown);
     };
 
     const onTaskArchiveBtnClick = (evt) => {
@@ -96,13 +140,6 @@ class TaskController {
       this._onDataChange(this._data, oldData);
     };
 
-    const onEditArchiveBtnClick = (evt) => {
-      evt.preventDefault();
-
-      this._data.isArchive = !this._data.isArchive;
-      this._toggleActiveBtnState(evt.target);
-    };
-
     const onTaskFavoritesBtnClick = (evt) => {
       evt.preventDefault();
 
@@ -112,40 +149,9 @@ class TaskController {
       this._onDataChange(this._data, oldData);
     };
 
-    const onEditFavoritesBtnClick = (evt) => {
-      evt.preventDefault();
-
-      this._data.isFavorite = !this._data.isFavorite;
-      this._toggleActiveBtnState(evt.target);
-    };
-
-    const onCardDeleteBtnClick = (evt) => {
-      evt.preventDefault();
-      this._onDataChange(null, this._data);
-    };
-
-    flatpickr(taskEditEl.querySelector(`.card__date`), {
-      altInput: true,
-      allowInput: true,
-      defaultDate: this._data.dueDate,
-    });
-
     taskEditBtnEl.addEventListener(`click`, onTaskEditBtnClick);
-    taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
-
-    taskEditTextEl.addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, onEscKeydown);
-    });
-
-    taskEditTextEl.addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, onEscKeydown);
-    });
-
     taskArchiveBtnEl.addEventListener(`click`, onTaskArchiveBtnClick);
-    editArchiveBtnEl.addEventListener(`click`, onEditArchiveBtnClick);
     taskFavoritesBtnEl.addEventListener(`click`, onTaskFavoritesBtnClick);
-    editFavoritesBtnEl.addEventListener(`click`, onEditFavoritesBtnClick);
-    taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
 
     render(this._container, this._currentView.getElement(), this._position);
   }

@@ -10,10 +10,10 @@ class TaskEdit extends AbstractComponent {
     this._repeatingDays = repeatingDays;
     this._isRepeating = Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
     this._description = description;
-    this._isOverdue = Date.now() > dueDate;
     this._dueDate = (dueDate) ? new Date(dueDate) : null;
+    this._isOverdue = (this._dueDate) ? Date.now() > dueDate : false;
     this._hasDate = Boolean(this._dueDate);
-    this._tags = [...tags];
+    this._tags = tags;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
     this._colors = [...this
@@ -67,17 +67,19 @@ class TaskEdit extends AbstractComponent {
                     date: <span class="card__date-status">${(this._dueDate) ? `yes` : `no`}</span>
                   </button>
 
-                  <fieldset class="card__date-deadline ${(this._dueDate) ? `` : `visually-hidden`}">
-                    <label class="card__input-deadline-wrap">
-                      <input
-                        class="card__date"
-                        type="text"
-                        placeholder=""
-                        name="date"
-                        value="${moment(this._dueDate).format(`LL`).toUpperCase()}"
-                      />
-                    </label>
-                  </fieldset>
+                  ${(this._dueDate) ? `
+                    <fieldset class="card__date-deadline">
+                      <label class="card__input-deadline-wrap">
+                        <input
+                          class="card__date"
+                          type="text"
+                          placeholder=""
+                          name="date"
+                          value="${moment(this._dueDate).format(`LL`).toUpperCase()}"
+                        />
+                      </label>
+                    </fieldset>
+                  ` : ``}
 
                   <button class="card__repeat-toggle" type="button">
                     repeat:<span class="card__repeat-status">${(this._isRepeating) ? `yes` : `no`}</span>

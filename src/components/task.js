@@ -7,8 +7,8 @@ class Task extends AbstractComponent {
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._description = description;
-    this._isOverdue = Date.now() > dueDate;
-    this._dueDate = new Date(dueDate);
+    this._dueDate = (dueDate) ? new Date(dueDate) : null;
+    this._isOverdue = (this._dueDate) ? Date.now() > dueDate : false;
     this._tags = [...tags];
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
@@ -46,7 +46,7 @@ class Task extends AbstractComponent {
 
             <div class="card__settings">
               <div class="card__details">
-                <div class="card__dates">
+                <div class="card__dates ${(this._dueDate) ? `` : `visually-idden`}">
                   <div class="card__date-deadline">
                     <p class="card__input-deadline-wrap">
                       <span class="card__date">${moment(this._dueDate).format(`LL`).toUpperCase()}</span>
