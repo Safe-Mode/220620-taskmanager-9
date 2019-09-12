@@ -46,7 +46,8 @@ class Task extends AbstractComponent {
 
             <div class="card__settings">
               <div class="card__details">
-                <div class="card__dates ${(this._dueDate) ? `` : `visually-idden`}">
+              ${(this._dueDate) ? `
+                <div class="card__dates">
                   <div class="card__date-deadline">
                     <p class="card__input-deadline-wrap">
                       <span class="card__date">${moment(this._dueDate).format(`LL`).toUpperCase()}</span>
@@ -54,6 +55,7 @@ class Task extends AbstractComponent {
                     </p>
                   </div>
                 </div>
+              ` : ``}
 
                 <div class="card__hashtag">
                   <div class="card__hashtag-list">

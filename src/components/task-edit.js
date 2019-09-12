@@ -13,7 +13,7 @@ class TaskEdit extends AbstractComponent {
     this._dueDate = (dueDate) ? new Date(dueDate) : null;
     this._isOverdue = (this._dueDate) ? Date.now() > dueDate : false;
     this._hasDate = Boolean(this._dueDate);
-    this._tags = tags;
+    this._tags = [...tags];
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
     this._colors = [...this
