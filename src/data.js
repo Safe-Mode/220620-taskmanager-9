@@ -15,13 +15,13 @@ const getRandomTask = () => {
       sa: false,
       su: false,
     },
-    tags: [
+    tags: new Set([
       `homework`,
       `theory`,
       `practice`,
       `intensive`,
       `keks`,
-    ].slice(0, Math.floor(Math.random() * 4)),
+    ].slice(0, Math.floor(Math.random() * 4))),
     color: [
       `black`,
       `yellow`,

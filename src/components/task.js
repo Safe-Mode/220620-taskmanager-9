@@ -9,7 +9,7 @@ class Task extends AbstractComponent {
     this._description = description;
     this._isOverdue = Date.now() > dueDate;
     this._dueDate = new Date(dueDate);
-    this._tags = tags;
+    this._tags = [...tags];
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
   }

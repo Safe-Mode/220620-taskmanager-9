@@ -11,16 +11,21 @@ const controlEl = mainEl.querySelector(`.control`);
 const board = new BoardController(mainEl, tasks);
 const menuEl = new Menu().getElement();
 const statEl = new Stat().getElement();
+const taskID = `control__task`;
 
 menuEl.addEventListener(`input`, (evt) => {
   switch (evt.target.id) {
-    case `control__task`:
+    case taskID:
       statEl.classList.add(`visually-hidden`);
       board.show();
       break;
     case `control__statistic`:
       statEl.classList.remove(`visually-hidden`);
       board.hide();
+      break;
+    case `control__new-task`:
+      board.createTask();
+      menuEl.querySelector(`#${taskID}`).checked = true;
       break;
   }
 });

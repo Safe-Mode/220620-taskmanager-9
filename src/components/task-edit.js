@@ -6,14 +6,14 @@ import {AbstractComponent} from './abstract-component';
 class TaskEdit extends AbstractComponent {
   constructor({color, repeatingDays, description, dueDate, tags, isArchive, isFavorite}) {
     super();
-    this._color = color;
+    this._color = (color) ? color : `black`;
     this._repeatingDays = repeatingDays;
     this._isRepeating = Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
     this._description = description;
     this._isOverdue = Date.now() > dueDate;
-    this._dueDate = new Date(dueDate);
+    this._dueDate = (dueDate) ? new Date(dueDate) : null;
     this._hasDate = Boolean(this._dueDate);
-    this._tags = tags;
+    this._tags = [...tags];
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
     this._colors = [...this

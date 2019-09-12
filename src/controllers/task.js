@@ -5,14 +5,16 @@ import {Task} from '../components/task';
 import {TaskEdit} from '../components/task-edit';
 
 class TaskController {
-  constructor(container, data, onDataChange, onChangeView, position) {
+  constructor(container, data, mode, onDataChange, onChangeView, position) {
     this._container = container;
     this._data = data;
     this._task = new Task(this._data);
     this._taskEdit = new TaskEdit(this._data);
+    this._currentView = (mode === `add`) ? this._taskEdit : this._task;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._position = position;
+    this._position = (mode === `add`) ? `begin` : position;
+    this._mode = mode;
   }
 
   _toggleActiveBtnState(btn) {
@@ -74,7 +76,7 @@ class TaskController {
         isFavorite: this._data.isFavorite,
       };
 
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, (this._mode === `add`) ? null : this._data);
       document.removeEventListener(`keydown`, onEscKeydown);
     };
 
@@ -145,7 +147,7 @@ class TaskController {
     editFavoritesBtnEl.addEventListener(`click`, onEditFavoritesBtnClick);
     taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
 
-    render(this._container, taskEl, this._position);
+    render(this._container, this._currentView.getElement(), this._position);
   }
 }
 

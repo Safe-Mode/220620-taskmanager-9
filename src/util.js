@@ -5,6 +5,8 @@ const createElement = (template) => {
 };
 
 const render = (container, element, position = `end`) => {
+  console.log(position);
+
   if (typeof position === `number`) {
     container.replaceChild(element, container.children[position]);
     return;

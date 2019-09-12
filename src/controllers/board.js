@@ -25,7 +25,7 @@ class BoardController {
   }
 
   _renderTask(task, index) {
-    const taskController = new TaskController(this._tasksEl, task, this._onDataChange, this._onChangeView, index);
+    const taskController = new TaskController(this._tasksEl, task, `default`, this._onDataChange, this._onChangeView, index);
 
     taskController.init();
     this._subscriptions.push(taskController.setDefaultView.bind(taskController));
@@ -77,13 +77,18 @@ class BoardController {
   }
 
   _onDataChange(newData, oldData) {
-    const taskIndex = this._tasks.findIndex((task) => task === oldData);
+    const taskIndex = (oldData) ? this._tasks.findIndex((task) => task === oldData) : 0;
 
     if (newData === null) {
       this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
       this._tasksToRender = this._tasks;
       this._unrenderTask(taskIndex);
       this._renderedTasks--;
+    } else if (oldData === null) {
+      this._tasks = [newData, ...this._tasks];
+      this._tasksToRender = this._tasks;
+      this._renderTask(this._tasks[taskIndex], taskIndex);
+      this._renderedTasks++;
     } else {
       this._tasks[taskIndex] = newData;
       this._renderTask(this._tasks[taskIndex], taskIndex);
@@ -104,6 +109,22 @@ class BoardController {
     this._board
       .getElement()
       .classList.add(`visually-hidden`);
+  }
+
+  createTask() {
+    const defaultTask = {
+      description: ``,
+      dueDate: Date.now(),
+      repeatingDays: {},
+      tags: new Set(),
+      color: ``,
+      isFavorite: false,
+      isArchive: false,
+    };
+
+    const taskController = new TaskController(this._tasksEl, defaultTask, `add`, this._onDataChange, this._onChangeView);
+
+    taskController.init();
   }
 
   init() {
