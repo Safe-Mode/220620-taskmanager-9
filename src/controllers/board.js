@@ -18,6 +18,7 @@ class BoardController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
     this._subscriptions = [];
+    this._creatingTask = null;
   }
 
   _unrenderTask(index) {
@@ -115,6 +116,10 @@ class BoardController {
   }
 
   createTask() {
+    if (this._creatingTask) {
+      return;
+    }
+
     const defaultTask = {
       description: ``,
       dueDate: Date.now(),
@@ -125,9 +130,8 @@ class BoardController {
       isArchive: false,
     };
 
-    const taskController = new TaskController(this._tasksEl, defaultTask, `add`, this._onDataChange, this._onChangeView);
-
-    taskController.init();
+    this._creatingTask = new TaskController(this._tasksEl, defaultTask, `add`, this._onDataChange, this._onChangeView);
+    this._creatingTask.init();
     this._tasks.unshift(defaultTask);
   }
 
