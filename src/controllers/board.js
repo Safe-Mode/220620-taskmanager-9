@@ -80,10 +80,13 @@ class BoardController {
     const taskIndex = (oldData) ? this._tasks.findIndex((task) => task === oldData) : 0;
 
     if (newData === null) {
-      this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
-      this._tasksToRender = this._tasks;
+      if (taskIndex !== -1) {
+        this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
+        this._tasksToRender = this._tasks;
+        this._renderedTasks--;
+      }
+
       this._unrenderTask(taskIndex);
-      this._renderedTasks--;
     } else if (oldData === null) {
       this._tasks = [newData, ...this._tasks];
       this._tasksToRender = this._tasks;
@@ -125,6 +128,7 @@ class BoardController {
     const taskController = new TaskController(this._tasksEl, defaultTask, `add`, this._onDataChange, this._onChangeView);
 
     taskController.init();
+    this._tasks.unshift(defaultTask);
   }
 
   init() {

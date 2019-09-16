@@ -24,7 +24,14 @@ class TaskController {
 
   _onEscKeydown(evt) {
     if (isEscPressed(evt.key)) {
-      this.setDefaultView();
+      switch (this._mode) {
+        case `add`:
+          this._onDataChange(null, this._data);
+          break;
+        default:
+          this.setDefaultView();
+      }
+
       document.removeEventListener(`keydown`, this._onEscKeydown);
     }
   }
@@ -97,17 +104,21 @@ class TaskController {
       });
     }
 
+    if (this._mode === `add`) {
+      document.addEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
+    }
+
     taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
     editArchiveBtnEl.addEventListener(`click`, onEditArchiveBtnClick);
     editFavoritesBtnEl.addEventListener(`click`, onEditFavoritesBtnClick);
     taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
 
     taskEditTextEl.addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, this._onEscKeydown);
+      document.removeEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
     });
 
     taskEditTextEl.addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, this._onEscKeydown);
+      document.addEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
     });
   }
 
