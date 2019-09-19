@@ -1,6 +1,7 @@
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.css';
-import {isEscPressed, render} from '../util';
+import {cloneDeep} from 'lodash';
+import {isEscPressed, render, unrender} from '../util';
 import {Task} from '../components/task';
 import {TaskEdit} from '../components/task-edit';
 
@@ -22,11 +23,17 @@ class TaskController {
     btn.classList[clsMethod](`card__btn--disabled`);
   }
 
+  _closeAddCard() {
+    unrender(this._taskEdit.getElement());
+    this._taskEdit.removeElement();
+    this._onDataChange(null, null);
+  }
+
   _onEscKeydown(evt) {
     if (isEscPressed(evt.key)) {
       switch (this._mode) {
         case `add`:
-          this._onDataChange(null, this._data);
+          this._closeAddCard();
           break;
         default:
           this.setDefaultView();
@@ -93,7 +100,14 @@ class TaskController {
 
     const onCardDeleteBtnClick = (deleteEvt) => {
       deleteEvt.preventDefault();
-      this._onDataChange(null, this._data);
+
+      switch (this._mode) {
+        case `add`:
+          this._closeAddCard();
+          break;
+        default:
+          this._onDataChange(null, this._data);
+      }
     };
 
     if (taskEditDateEl) {
@@ -149,6 +163,7 @@ class TaskController {
 
       const oldData = this._data;
 
+      this._data = cloneDeep(this._data);
       this._data.isArchive = !this._data.isArchive;
       this._onDataChange(this._data, oldData);
     };
@@ -158,6 +173,7 @@ class TaskController {
 
       const oldData = this._data;
 
+      this._data = cloneDeep(this._data);
       this._data.isFavorite = !this._data.isFavorite;
       this._onDataChange(this._data, oldData);
     };
