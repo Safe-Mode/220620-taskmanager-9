@@ -14,6 +14,7 @@ class TaskController {
     this._currentView = (mode === `add`) ? this._taskEdit : this._task;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
+    this._onEscKeydown = this._onEscKeydown.bind(this);
     this._position = (mode === `add`) ? `begin` : position;
     this._mode = mode;
   }
@@ -119,7 +120,7 @@ class TaskController {
     }
 
     if (this._mode === `add`) {
-      document.addEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
+      document.addEventListener(`keydown`, this._onEscKeydown);
     }
 
     taskEditFormEl.addEventListener(`submit`, onTaskEditFormSubmit);
@@ -128,11 +129,11 @@ class TaskController {
     taskDeleteBtnEl.addEventListener(`click`, onCardDeleteBtnClick);
 
     taskEditTextEl.addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
+      document.removeEventListener(`keydown`, this._onEscKeydown);
     });
 
     taskEditTextEl.addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, (evt) => this._onEscKeydown(evt));
+      document.addEventListener(`keydown`, this._onEscKeydown);
     });
   }
 
@@ -155,7 +156,7 @@ class TaskController {
       this._taskEdit = new TaskEdit(this._data);
       this._setListeners();
       this._container.replaceChild(this._taskEdit.getElement(), taskEl);
-      document.addEventListener(`keydown`, (escEvt) => this._onEscKeydown(escEvt));
+      document.addEventListener(`keydown`, this._onEscKeydown);
     };
 
     const onTaskArchiveBtnClick = (evt) => {
