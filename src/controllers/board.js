@@ -3,7 +3,9 @@ import {render, unrender} from '../util';
 import {Board} from '../components/board';
 import {Sort} from '../components/sort';
 import {MoreBtn} from '../components/more-btn';
-import {TaskController} from './task';
+import {TaskList} from '../components/task-list';
+import {TaskListController} from './task-list';
+
 
 class BoardController {
   constructor(container, tasks) {
@@ -13,23 +15,10 @@ class BoardController {
     this._renderedTasks = 0;
     this._sortEl = new Sort().getElement();
     this._board = new Board(this._tasks);
-    this._tasksEl = this._board.getElement().querySelector(`.board__tasks`);
+    this._taskList = new TaskList(this._tasks);
     this._loadMoreEl = new MoreBtn().getElement();
     this._onDataChange = this._onDataChange.bind(this);
-    this._onChangeView = this._onChangeView.bind(this);
-    this._subscriptions = [];
-    this._creatingTask = null;
-  }
-
-  _unrenderTask(index) {
-    unrender(this._tasksEl.children[index]);
-  }
-
-  _renderTask(task, index) {
-    const taskController = new TaskController(this._tasksEl, task, `default`, this._onDataChange, this._onChangeView, index);
-
-    taskController.init();
-    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+    this._taskListController = new TaskListController(this._board.getElement(), this._tasks, this._taskList, this._onDataChange);
   }
 
   _renderTasks(isContinues = true) {
@@ -38,7 +27,7 @@ class BoardController {
     const endIndex = this._renderedTasks + quantity;
 
     for (let i = this._renderedTasks; i < endIndex && i < this._tasksToRender.length; i++) {
-      this._renderTask(this._tasksToRender[i]);
+      this._taskListController.renderTask(this._tasksToRender[i]);
       this._renderedTasks++;
     }
 
@@ -54,7 +43,7 @@ class BoardController {
 
     if (sortType) {
       const tasksCopy = this._tasks.slice();
-      this._tasksEl.innerHTML = ``;
+      this._taskList.getElement().innerHTML = ``;
 
       switch (sortType) {
         case `default`:
@@ -77,33 +66,22 @@ class BoardController {
     }
   }
 
-  _onDataChange(newData, oldData) {
-    const taskIndex = (oldData) ? this._tasks.findIndex((task) => task === oldData) : 0;
+  _onDataChange(operator, tasks) {
+    this._tasksToRender = tasks;
+    this._tasks = tasks;
 
-    if (newData === null && oldData === null) {
-      this._creatingTask = null;
-    } else if (newData === null) {
-      if (taskIndex !== -1) {
-        this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
-        this._tasksToRender = this._tasks;
+    switch (operator) {
+      case `add`:
+        this._renderedTasks++;
+        break;
+      case `sub`:
         this._renderedTasks--;
-      }
-
-      this._creatingTask = null;
-      this._unrenderTask(taskIndex);
-    } else if (oldData === null) {
-      this._tasks = [newData, ...this._tasks];
-      this._tasksToRender = this._tasks;
-      this._renderTask(this._tasks[taskIndex], taskIndex);
-      this._renderedTasks++;
-    } else {
-      this._tasks[taskIndex] = newData;
-      this._renderTask(this._tasks[taskIndex], taskIndex);
+        break;
     }
   }
 
-  _onChangeView() {
-    this._subscriptions.forEach((subscription) => subscription());
+  createTask() {
+    this._taskListController.createTask();
   }
 
   show() {
@@ -118,26 +96,6 @@ class BoardController {
       .classList.add(`visually-hidden`);
   }
 
-  createTask() {
-    if (this._creatingTask) {
-      return;
-    }
-
-    const defaultTask = {
-      description: ``,
-      dueDate: Date.now(),
-      repeatingDays: {},
-      tags: new Set(),
-      color: ``,
-      isFavorite: false,
-      isArchive: false,
-    };
-
-    this._creatingTask = new TaskController(this._tasksEl, defaultTask, `add`, this._onDataChange, this._onChangeView);
-    this._creatingTask.init();
-    // this._tasks.unshift(defaultTask);
-  }
-
   init() {
     const boardEl = this._board.getElement();
 
@@ -149,6 +107,7 @@ class BoardController {
 
     this._renderTasks();
     render(boardEl, this._sortEl, `begin`);
+    render(boardEl, this._taskList.getElement());
     render(boardEl, this._loadMoreEl);
     render(this._container, boardEl);
   }

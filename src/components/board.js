@@ -7,14 +7,7 @@ class Board extends AbstractComponent {
   }
 
   getTemplate() {
-    return `
-      <div class="board container">
-        ${(this._quantity) ? `<div class="board__tasks"></div>` : `<p class="board__no-tasks">
-          Congratulations, all tasks were completed! To create a new click on
-          «add new task» button.
-        </p>`}
-      </div>
-    `;
+    return `<div class="board container"></div>`;
   }
 }
 
