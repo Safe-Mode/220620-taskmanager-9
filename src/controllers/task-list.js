@@ -21,8 +21,6 @@ class TaskListController {
     } else if (newData === null) {
       if (taskIndex !== -1) {
         this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
-        console.log(this._tasks);
-
         this._onDataMainChange(`sub`, this._tasks);
       }
 
@@ -31,7 +29,6 @@ class TaskListController {
     } else if (oldData === null) {
       this._tasks = [newData, ...this._tasks];
       this.renderTask(this._tasks[taskIndex], taskIndex);
-      console.log(this._tasks);
       this._onDataMainChange(`add`, this._tasks);
     } else {
       this._tasks[taskIndex] = newData;
