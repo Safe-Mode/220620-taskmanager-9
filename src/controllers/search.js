@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {render, unrender} from '../util';
 import {SearchList} from '../components/search-list';
 import {SearchGroup} from '../components/search-group';
@@ -32,11 +33,12 @@ class SearchController {
     this._searchInfo = new SearchInfo(text, tasks);
     render(this._searchGroup.getElement(), this._searchInfo.getElement(), `begin`);
     this._taskListController.setTasks(tasks);
+
     this._searchList
       .getElement()
       .innerHTML = ``;
 
-    this._tasks.forEach((task) => {
+    tasks.forEach((task) => {
       this._taskListController.renderTask(task);
     });
   }
@@ -63,6 +65,38 @@ class SearchController {
       .getElement()
       .querySelector(`.result__back`)
       .addEventListener(`click`, this._onSearchBackBtnClick);
+
+    this._search
+      .getElement()
+      .addEventListener(`input`, (evt) => {
+        let {value} = evt.target;
+        let tasks;
+
+        console.log(this._tasks);
+
+
+        switch (value[0]) {
+          case `#`:
+            value = value.slice(1);
+            tasks = this._tasks.filter((task) => {
+              return task.tags.includes(value);
+            });
+            break;
+          case `D`:
+            value = value.slice(1);
+            tasks = this._tasks.filter((task) => {
+              const dueDate = moment(task.dueDate).hour(0).minute(0).second(0).millisecond(0);
+              return dueDate.valueOf() === moment(value, `DD.MM.YYYY`).valueOf();
+            });
+            break;
+          default:
+            tasks = this._tasks.filter((task) => {
+              return task.description.includes(value);
+            });
+        }
+
+        this._showSearchResult(value, tasks);
+      });
 
     render(this._searchGroup.getElement(), this._searchInfo.getElement());
     render(this._searchGroup.getElement(), this._searchList.getElement());

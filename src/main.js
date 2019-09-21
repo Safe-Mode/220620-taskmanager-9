@@ -52,14 +52,16 @@ menuEl.addEventListener(`input`, (evt) => {
 search
   .getElement()
   .querySelector(`.search__input`)
-  .addEventListener(`focus`, () => {
-    if (!hasSearch) {
-      hasSearch = searchResult.init();
-    }
+  .addEventListener(`focus`, (evt) => {
+    if (!evt.target.value) {
+      if (!hasSearch) {
+        hasSearch = searchResult.init();
+      }
 
-    board.hide();
-    statEl.classList.add(`visually-hidden`);
-    searchResult.show(tasks);
+      board.hide();
+      statEl.classList.add(`visually-hidden`);
+      searchResult.show(tasks);
+    }
   });
 
 statEl.classList.add(`visually-hidden`);
