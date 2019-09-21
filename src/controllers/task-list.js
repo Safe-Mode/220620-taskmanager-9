@@ -2,8 +2,7 @@ import {render, unrender} from '../util';
 import {TaskController} from './task';
 
 class TaskListController {
-  constructor(container, tasks, taskList, onDataChange) {
-    this._container = container;
+  constructor(tasks, taskList, onDataChange) {
     this._tasks = tasks;
     this._taskList = taskList;
     this._onDataMainChange = onDataChange;
@@ -68,6 +67,11 @@ class TaskListController {
 
     taskController.init();
     this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+  }
+
+  setTasks(tasks) {
+    this._tasks = tasks;
+    this._subscriptions = [];
   }
 }
 

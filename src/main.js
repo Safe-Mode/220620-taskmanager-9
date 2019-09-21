@@ -59,7 +59,7 @@ search
 
     board.hide();
     statEl.classList.add(`visually-hidden`);
-    searchResult.show();
+    searchResult.show(tasks);
   });
 
 statEl.classList.add(`visually-hidden`);

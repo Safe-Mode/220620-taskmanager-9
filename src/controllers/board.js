@@ -18,7 +18,7 @@ class BoardController {
     this._taskList = new TaskList(this._tasks);
     this._loadMoreEl = new MoreBtn().getElement();
     this._onDataChange = this._onDataChange.bind(this);
-    this._taskListController = new TaskListController(this._board.getElement(), this._tasks, this._taskList, this._onDataChange);
+    this._taskListController = new TaskListController(this._tasks, this._taskList, this._onDataChange);
   }
 
   _renderTasks(isContinues = true) {
