@@ -25,7 +25,9 @@ const render = (container, element, position = `end`) => {
 const unrender = (element, cb) => {
   if (element) {
     element.remove();
-    cb();
+    if (cb) {
+      cb();
+    }
   }
 };
 
