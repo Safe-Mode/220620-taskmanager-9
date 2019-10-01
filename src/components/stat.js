@@ -30,7 +30,7 @@ class Stat extends AbstractComponent {
           <div class="statistic__tags-wrap visually-hidden">
             <canvas class="statistic__tags" width="400" height="300"></canvas>
           </div>
-          <div class="statistic__colors-wrap visually-hidden">
+          <div class="statistic__colors-wrap">
             <canvas class="statistic__colors" width="400" height="300"></canvas>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import {CARDS_PER_PAGE} from '../const';
-import {render, unrender} from '../util';
+import {render} from '../util';
 import {Board} from '../components/board';
 import {Sort} from '../components/sort';
 import {MoreBtn} from '../components/more-btn';

@@ -2,10 +2,11 @@ import {render} from './util';
 import {Menu} from './components/menu';
 import {Search} from './components/search';
 import {Filter} from './components/filter';
-import {Stat} from './components/stat';
+import {StatController} from './controllers/stat';
 import {BoardController} from './controllers/board';
 import {SearchController} from './controllers/search';
 import {tasks, filters} from './data';
+import Chart from 'chart.js';
 
 const mainEl = document.querySelector(`.main`);
 const controlEl = mainEl.querySelector(`.control`);
@@ -13,7 +14,7 @@ const search = new Search();
 const board = new BoardController(mainEl, tasks);
 const menu = new Menu();
 const menuEl = menu.getElement();
-const statEl = new Stat().getElement();
+const stat = new StatController(mainEl, tasks);
 const taskID = `control__task`;
 let hasSearch = false;
 
@@ -21,7 +22,7 @@ const onSearchBackBtnClick = (evt) => {
   evt.preventDefault();
 
   searchResult.hide();
-  statEl.classList.add(`visually-hidden`);
+  stat.hide();
   board.show();
 };
 
@@ -30,17 +31,17 @@ const searchResult = new SearchController(mainEl, search, onSearchBackBtnClick);
 menuEl.addEventListener(`input`, (evt) => {
   switch (evt.target.id) {
     case taskID:
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.hide();
       board.show();
       break;
     case `control__statistic`:
-      statEl.classList.remove(`visually-hidden`);
+      stat.show();
       searchResult.hide();
       board.hide();
       break;
     case `control__new-task`:
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.hide();
       board.show();
       board.createTask();
@@ -59,14 +60,14 @@ search
       }
 
       board.hide();
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.show(tasks);
     }
   });
 
-statEl.classList.add(`visually-hidden`);
+// stat.hide();
 render(controlEl, menuEl);
 render(mainEl, search.getElement());
 render(mainEl, new Filter(filters).getElement());
-render(mainEl, statEl);
+stat.init();
 board.init();
