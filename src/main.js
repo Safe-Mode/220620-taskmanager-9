@@ -6,7 +6,6 @@ import {StatController} from './controllers/stat';
 import {BoardController} from './controllers/board';
 import {SearchController} from './controllers/search';
 import {tasks, filters} from './data';
-import Chart from 'chart.js';
 
 const mainEl = document.querySelector(`.main`);
 const controlEl = mainEl.querySelector(`.control`);
@@ -36,7 +35,7 @@ menuEl.addEventListener(`input`, (evt) => {
       board.show();
       break;
     case `control__statistic`:
-      stat.show();
+      stat.show(tasks);
       searchResult.hide();
       board.hide();
       break;
@@ -65,7 +64,7 @@ search
     }
   });
 
-// stat.hide();
+stat.hide();
 render(controlEl, menuEl);
 render(mainEl, search.getElement());
 render(mainEl, new Filter(filters).getElement());

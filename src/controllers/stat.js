@@ -2,15 +2,79 @@ import moment from 'moment';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.css';
 import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {COLORS, TAGS, DAYS_PER_WEEK} from '../const';
 import {render} from '../util';
+import {getDaySettings, getTagSettings, getColorSettings} from '../settings';
 import {Stat} from '../components/stat';
 
 class StatController {
-  constructor(container, tasks) {
+  constructor(container) {
     this._container = container;
-    this._tasks = tasks;
+    this._tasks = [];
     this._stat = new Stat();
+    this._colorsChart = null;
+    this._tagsChart = null;
+    this._daysChart = null;
+    this._range = null;
+  }
+
+  _renderStat(tasks) {
+    const colorsCtx = this._stat
+      .getElement()
+      .querySelector(`.statistic__colors`);
+    const tagsCtx = this._stat
+      .getElement()
+      .querySelector(`.statistic__tags`);
+    const daysCtx = this._stat
+      .getElement()
+      .querySelector(`.statistic__days`);
+    const taskColors = tasks.map((task) => task.color);
+    const taskTags = tasks.reduce((acc, task) => {
+      return acc.concat(task.tags.map((tag) => tag));
+    }, []);
+
+    const colorsData = COLORS.map((color) => {
+      return taskColors.filter((taskColor) => taskColor === color).length;
+    });
+
+    const tagsData = TAGS.map((tag) => {
+      return taskTags.filter((taskTag) => taskTag === tag).length;
+    });
+
+    const taskDays = tasks.map((task) => {
+      const dueDate = moment(task.dueDate);
+
+      dueDate.hours(0);
+      dueDate.minutes(0);
+      dueDate.seconds(0);
+      dueDate.milliseconds(0);
+
+      return dueDate;
+    });
+
+    const daysData = new Array(DAYS_PER_WEEK).fill(``).map((it, i) => {
+      const week = moment(this._range[0]).week();
+      const day = moment().week(week).day(i + 1);
+
+      day.hours(0);
+      day.minutes(0);
+      day.seconds(0);
+      day.milliseconds(0);
+
+      const rangeTaskDays = taskDays.filter((taskDay) => {
+        return day.valueOf() === taskDay.valueOf();
+      });
+
+      return {
+        dateStr: day.format(`DD MMM`),
+        count: rangeTaskDays.length,
+      };
+    });
+
+    this._tasks = tasks;
+    this._colorsChart = new Chart(colorsCtx, getColorSettings(colorsData));
+    this._tagsChart = new Chart(tagsCtx, getTagSettings(tagsData));
+    this._daysChart = new Chart(daysCtx, getDaySettings(daysData));
   }
 
   hide() {
@@ -19,7 +83,8 @@ class StatController {
       .classList.add(`visually-hidden`);
   }
 
-  show() {
+  show(tasks) {
+    this._renderStat(tasks);
     this._stat
       .getElement()
       .classList.remove(`visually-hidden`);
@@ -28,7 +93,26 @@ class StatController {
   init() {
     const statEl = this._stat.getElement();
     const periodFieldEl = statEl.querySelector(`.statistic__period-input`);
-    const colorsCtx = statEl.querySelector(`.statistic__colors`);
+
+    const setRange = (selectedDates) => {
+      this._range = selectedDates.map((date) => date.getTime());
+    };
+
+    const onReady = (selectedDates) => {
+      setRange.bind(this)(selectedDates);
+    };
+
+    const onValueUpdate = (selectedDates) => {
+      if (selectedDates.length > 1) {
+        setRange.bind(this)(selectedDates);
+
+        const datesData = this._tasks.filter((task) => {
+          return task.dueDate >= this._range[0] && task.dueDate <= this._range[1];
+        });
+
+        this._renderStat.bind(this)(datesData);
+      }
+    };
 
     flatpickr(periodFieldEl, {
       mode: `range`,
@@ -36,66 +120,11 @@ class StatController {
       allowInput: true,
       defaultDate: [
         moment().week(moment().week() - 1).day(1).format(`YYYY-MM-DD`),
-        moment().week(moment().week() - 1).day(7).format(`YYYY-MM-DD`)
+        moment().week(moment().week() - 1).day(DAYS_PER_WEEK).format(`YYYY-MM-DD`)
       ],
+      onReady,
+      onValueUpdate,
     });
-
-    const colorsChart = new Chart(colorsCtx, {
-      plugins: [ChartDataLabels],
-      type: `pie`,
-      data: {
-        labels: [`#pink`, `#yellow`, `#blue`, `#black`, `#green`],
-        datasets: [{
-          data: [5, 25, 15, 10, 30],
-          backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
-        }]
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            display: false
-          }
-        },
-        tooltips: {
-          callbacks: {
-            label: (tooltipItem, data) => {
-              const allData = data.datasets[tooltipItem.datasetIndex].data;
-              const tooltipData = allData[tooltipItem.index];
-              const total = allData.reduce((acc, it) => acc + parseFloat(it));
-              const tooltipPercentage = Math.round((tooltipData / total) * 100);
-              return `${tooltipData} TASKS — ${tooltipPercentage}%`;
-            }
-          },
-          displayColors: false,
-          backgroundColor: `#ffffff`,
-          bodyFontColor: `#000000`,
-          borderColor: `#000000`,
-          borderWidth: 1,
-          cornerRadius: 0,
-          xPadding: 15,
-          yPadding: 15
-        },
-        title: {
-          display: true,
-          text: `DONE BY: COLORS`,
-          fontSize: 16,
-          fontColor: `#000000`
-        },
-        legend: {
-          position: `left`,
-          labels: {
-            boxWidth: 15,
-            padding: 25,
-            fontStyle: 500,
-            fontColor: `#000000`,
-            fontSize: 13
-          }
-        }
-      }
-    });
-
-    console.log(colorsChart);
-
 
     render(this._container, statEl);
   }
