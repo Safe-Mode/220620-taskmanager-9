@@ -21,10 +21,10 @@ class BoardController {
     this._taskListController = new TaskListController(this._tasks, this._taskList, this._onDataChange);
   }
 
-  _renderTasks(isContinues = true) {
+  _renderTasks(isContinues = true, isEmpty = false) {
     const quantity = (isContinues) ? CARDS_PER_PAGE : this._renderedTasks;
     this._renderedTasks = (isContinues) ? this._renderedTasks : 0;
-    const endIndex = this._renderedTasks + quantity;
+    const endIndex = (isEmpty) ? this._renderedTasks + CARDS_PER_PAGE : this._renderedTasks + quantity;
 
     for (let i = this._renderedTasks; i < endIndex && i < this._tasksToRender.length; i++) {
       this._taskListController.renderTask(this._tasksToRender[i]);
@@ -33,6 +33,8 @@ class BoardController {
 
     if (this._renderedTasks >= this._tasksToRender.length && this._loadMoreEl) {
       this._loadMoreEl.remove();
+    } else if (this._renderedTasks < this._tasksToRender.length && !this._board.getElement().contains(this._loadMoreEl)) {
+      render(this._board.getElement(), this._loadMoreEl);
     }
   }
 
@@ -84,7 +86,12 @@ class BoardController {
     this._taskListController.createTask();
   }
 
-  show() {
+  show(tasks) {
+    this._tasksToRender = tasks;
+    // this._tasks = tasks;
+    this._taskList.getElement().innerHTML = ``;
+
+    this._renderTasks(false, true);
     this._board
       .getElement()
       .classList.remove(`visually-hidden`);

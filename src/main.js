@@ -23,7 +23,7 @@ const onSearchBackBtnClick = (evt) => {
 
   searchResult.hide();
   stat.hide();
-  board.show();
+  board.show(tasks);
 };
 
 const onFilterChange = (evt) => {
@@ -73,6 +73,9 @@ const onFilterChange = (evt) => {
       break;
   }
 
+  console.log(filtered);
+
+
   stat.hide();
   searchResult.hide();
   board.show(filtered);
@@ -86,7 +89,7 @@ menuEl.addEventListener(`input`, (evt) => {
     case taskID:
       stat.hide();
       searchResult.hide();
-      board.show();
+      board.show(tasks);
       break;
     case `control__statistic`:
       stat.show(tasks);
@@ -96,7 +99,7 @@ menuEl.addEventListener(`input`, (evt) => {
     case `control__new-task`:
       stat.hide();
       searchResult.hide();
-      board.show();
+      board.show(tasks);
       board.createTask();
       menuEl.querySelector(`#${taskID}`).checked = true;
       break;
