@@ -1,8 +1,9 @@
+import {cloneDeep} from 'lodash';
 import {render} from './util';
 import {Menu} from './components/menu';
 import {Search} from './components/search';
-import {Filter} from './components/filter';
-import {Stat} from './components/stat';
+import {FilterController} from './controllers/filter';
+import {StatController} from './controllers/stat';
 import {BoardController} from './controllers/board';
 import {SearchController} from './controllers/search';
 import {tasks, filters} from './data';
@@ -13,7 +14,7 @@ const search = new Search();
 const board = new BoardController(mainEl, tasks);
 const menu = new Menu();
 const menuEl = menu.getElement();
-const statEl = new Stat().getElement();
+const stat = new StatController(mainEl, tasks);
 const taskID = `control__task`;
 let hasSearch = false;
 
@@ -21,28 +22,84 @@ const onSearchBackBtnClick = (evt) => {
   evt.preventDefault();
 
   searchResult.hide();
-  statEl.classList.add(`visually-hidden`);
-  board.show();
+  stat.hide();
+  board.show(tasks);
+};
+
+const onFilterChange = (evt) => {
+  let filtered = [];
+
+  switch (evt.target.id) {
+    case `filter__all`:
+      filtered = cloneDeep(tasks);
+      break;
+    case `filter__overdue`:
+      filtered = tasks.filter((task) => {
+        return task.isOverdue;
+      });
+
+      break;
+    case `filter__today`:
+      filtered = tasks.filter((task) => {
+        return new Date(task.dueDate).toDateString() === new Date(Date.now()).toDateString();
+      });
+
+      break;
+    case `filter__favorites`:
+      filtered = tasks.filter((task) => {
+        return task.isFavorite;
+      });
+
+      break;
+    case `filter__repeating`:
+      filtered = tasks.filter((task) => {
+        return Object.values(task.repeatingDays).some((value) => {
+          return value;
+        });
+      });
+
+      break;
+    case `filter__tags`:
+      filtered = tasks.filter((task) => {
+        return task.tags.length;
+      });
+
+      break;
+    case `filter__archive`:
+      filtered = tasks.filter((task) => {
+        return task.isArchive.length;
+      });
+
+      break;
+  }
+
+  console.log(filtered);
+
+
+  stat.hide();
+  searchResult.hide();
+  board.show(filtered);
 };
 
 const searchResult = new SearchController(mainEl, search, onSearchBackBtnClick);
+const filter = new FilterController(mainEl, filters, onFilterChange);
 
 menuEl.addEventListener(`input`, (evt) => {
   switch (evt.target.id) {
     case taskID:
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.hide();
-      board.show();
+      board.show(tasks);
       break;
     case `control__statistic`:
-      statEl.classList.remove(`visually-hidden`);
+      stat.show(tasks);
       searchResult.hide();
       board.hide();
       break;
     case `control__new-task`:
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.hide();
-      board.show();
+      board.show(tasks);
       board.createTask();
       menuEl.querySelector(`#${taskID}`).checked = true;
       break;
@@ -59,14 +116,14 @@ search
       }
 
       board.hide();
-      statEl.classList.add(`visually-hidden`);
+      stat.hide();
       searchResult.show(tasks);
     }
   });
 
-statEl.classList.add(`visually-hidden`);
+stat.hide();
 render(controlEl, menuEl);
 render(mainEl, search.getElement());
-render(mainEl, new Filter(filters).getElement());
-render(mainEl, statEl);
+filter.init();
+stat.init();
 board.init();

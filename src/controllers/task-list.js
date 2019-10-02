@@ -1,4 +1,4 @@
-import {render, unrender} from '../util';
+import {unrender} from '../util';
 import {TaskController} from './task';
 
 class TaskListController {
