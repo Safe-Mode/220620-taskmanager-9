@@ -4,6 +4,8 @@ import {AbstractComponent} from './abstract-component';
 class Task extends AbstractComponent {
   constructor({color, repeatingDays, description, dueDate, tags, isArchive, isFavorite}) {
     super();
+    console.log(tags);
+
     this._color = color;
     this._repeatingDays = repeatingDays;
     this._description = description;

@@ -1,5 +1,6 @@
 import {unrender} from '../util';
 import {TaskController} from './task';
+import {ModelTask} from '../model-task';
 
 class TaskListController {
   constructor(tasks, taskList, onDataChange) {
@@ -28,8 +29,18 @@ class TaskListController {
       this.renderTask(this._tasks[taskIndex], taskIndex);
       this._onDataMainChange(`add`, this._tasks);
     } else {
-      this._tasks[taskIndex] = newData;
-      this.renderTask(this._tasks[taskIndex], taskIndex);
+      const newTask = this._tasks[taskIndex];
+
+      for (let key in newData) {
+        if (newData.hasOwnProperty(key)) {
+          newTask[key] = newData[key];
+        }
+      }
+
+      newTask.id = this._tasks[taskIndex].id;
+      this._onDataMainChange(`update`, newTask, this.renderTask.bind(this, newTask, taskIndex));
+      // this._tasks[taskIndex] = newData;
+      // this.renderTask(this._tasks[taskIndex], taskIndex);
     }
   }
 

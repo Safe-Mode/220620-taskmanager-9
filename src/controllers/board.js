@@ -69,10 +69,16 @@ class BoardController {
     }
   }
 
-  _onDataChange(operator, task, unrenderFn) {
+  _onDataChange(operator, task, renderFn, unrenderFn) {
     switch (operator) {
       case `add`:
         this._renderedTasks++;
+        break;
+      case `update`:
+        this._api.updateTask({
+          id: task.id,
+          data: task.toRAW(),
+        }).then(renderFn);
         break;
       case `delete`:
         this._api.deleteTask(task)
