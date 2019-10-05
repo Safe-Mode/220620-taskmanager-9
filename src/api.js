@@ -26,7 +26,7 @@ const API = class {
       .then(ModelTask.parseTasks);
   }
 
-  createTask({task}) {
+  createTask(task) {
     return this._load({
       url: `tasks`,
       method: `POST`,

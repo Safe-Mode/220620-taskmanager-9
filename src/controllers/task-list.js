@@ -20,14 +20,20 @@ class TaskListController {
       this._creatingTask = null;
     } else if (newData === null) {
       if (taskIndex !== -1) {
-        this._onDataMainChange(`delete`, this._tasks[taskIndex], this.unrenderTask.bind(this, taskIndex));
+        this._onDataMainChange(`delete`, this._tasks[taskIndex], null, this.unrenderTask.bind(this, taskIndex));
       }
 
       this._creatingTask = null;
     } else if (oldData === null) {
-      this._tasks = [newData, ...this._tasks];
-      this.renderTask(this._tasks[taskIndex], taskIndex);
-      this._onDataMainChange(`add`, this._tasks);
+      const newTask = new ModelTask(newData);
+
+      for (let key in newData) {
+        if (newData.hasOwnProperty(key)) {
+          newTask[key] = newData[key];
+        }
+      }
+
+      this._onDataMainChange(`add`, newTask, this.renderTask.bind(this, newTask, taskIndex));
     } else {
       const newTask = this._tasks[taskIndex];
 
@@ -39,8 +45,6 @@ class TaskListController {
 
       newTask.id = this._tasks[taskIndex].id;
       this._onDataMainChange(`update`, newTask, this.renderTask.bind(this, newTask, taskIndex));
-      // this._tasks[taskIndex] = newData;
-      // this.renderTask(this._tasks[taskIndex], taskIndex);
     }
   }
 
@@ -65,6 +69,7 @@ class TaskListController {
 
     this._creatingTask = new TaskController(this._taskList.getElement(), defaultTask, `add`, this._onDataChange, this._onChangeView);
     this._creatingTask.init();
+    this._creatingTask = null;
   }
 
   unrenderTask(index) {
