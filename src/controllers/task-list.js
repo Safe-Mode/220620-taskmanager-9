@@ -19,12 +19,10 @@ class TaskListController {
       this._creatingTask = null;
     } else if (newData === null) {
       if (taskIndex !== -1) {
-        this._tasks = [...this._tasks.slice(0, taskIndex), ...this._tasks.slice(taskIndex + 1)];
-        this._onDataMainChange(`sub`, this._tasks);
+        this._onDataMainChange(`delete`, this._tasks[taskIndex], this.unrenderTask.bind(this, taskIndex));
       }
 
       this._creatingTask = null;
-      this.unrenderTask(taskIndex);
     } else if (oldData === null) {
       this._tasks = [newData, ...this._tasks];
       this.renderTask(this._tasks[taskIndex], taskIndex);
