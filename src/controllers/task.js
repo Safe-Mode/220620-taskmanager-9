@@ -60,7 +60,7 @@ class TaskController {
 
       const entry = {
         description: formData.get(`text`),
-        dueDate: new Date(formData.get(`date`)).getTime(),
+        dueDate: new Date(formData.get(`date`)).toISOString(),
         repeatingDays: formData
           .getAll(`repeat`)
           .reduce((days, day) => {

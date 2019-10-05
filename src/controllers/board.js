@@ -6,11 +6,11 @@ import {MoreBtn} from '../components/more-btn';
 import {TaskList} from '../components/task-list';
 import {TaskListController} from './task-list';
 
-
 class BoardController {
-  constructor(container, tasks) {
+  constructor(container, tasks, api) {
     this._container = container;
     this._tasks = tasks;
+    this._api = api;
     this._tasksToRender = tasks;
     this._renderedTasks = 0;
     this._sortEl = new Sort().getElement();
@@ -68,16 +68,35 @@ class BoardController {
     }
   }
 
-  _onDataChange(operator, tasks) {
-    this._tasksToRender = tasks;
-    this._tasks = tasks;
-
+  _onDataChange(operator, task, renderFn, unrenderFn) {
     switch (operator) {
       case `add`:
-        this._renderedTasks++;
+        this._api.createTask(task.toRAW())
+          .then(() => this._api.getTasks())
+          .then((tasks) => {
+            renderFn();
+            this._taskListController.setTasks(tasks);
+            this._tasksToRender = tasks;
+            this._tasks = tasks;
+            this._renderedTasks++;
+          });
         break;
-      case `sub`:
-        this._renderedTasks--;
+      case `update`:
+        this._api.updateTask({
+          id: task.id,
+          data: task.toRAW(),
+        }).then(renderFn);
+        break;
+      case `delete`:
+        this._api.deleteTask(task)
+          .then(() => this._api.getTasks())
+          .then((tasks) => {
+            unrenderFn();
+            this._tasksToRender = tasks;
+            this._tasks = tasks;
+            this._renderedTasks--;
+            this._taskListController.setTasks(tasks);
+          });
         break;
     }
   }
@@ -115,7 +134,11 @@ class BoardController {
     this._renderTasks();
     render(boardEl, this._sortEl, `begin`);
     render(boardEl, this._taskList.getElement());
-    render(boardEl, this._loadMoreEl);
+
+    if (this._tasks.length > 8) {
+      render(boardEl, this._loadMoreEl);
+    }
+
     render(this._container, boardEl);
   }
 }
